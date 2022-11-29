@@ -1,6 +1,7 @@
 // Get the packages we need
 var express = require('express'),
     mongoose = require('mongoose'),
+    router = express.Router(),
     bodyParser = require('body-parser'),
     cookieParser = require("cookie-parser"),
     secrets = require('./config/secrets'),
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use(cors);
 
 // Use routes as a module (see index.js)
+require("./routes")(app, router);
 
 // Start the server
 app.listen(port);
