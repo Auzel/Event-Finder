@@ -15,7 +15,7 @@ class LoginPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
-        {/* <div className="headerTwo">
+        <div className="headerTwo">
 
           <Link to={'/'}>
 
@@ -37,7 +37,7 @@ class LoginPage extends React.Component
 
           <input placeholder="Enter Your Password"/>
         
-        </div> */}
+        </div>
 
       </div>
     );
