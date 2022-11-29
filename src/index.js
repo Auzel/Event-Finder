@@ -5,17 +5,32 @@ import {BrowserRouter} from "react-router-dom";
 import './scss/index.scss';
 import App from './js/App.js';
 import reportWebVitals from './reportWebVitals';
+import { createTheme, ThemeProvider } from '@mui/material';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root')
 );
 
+// Default initializer of custom theme
+const theme = createTheme({
+  components: {
+    MuiButton: {
+      defaultProps: {
+        disableRipple: false
+      }
+    }
+  }
+})
+
 root.render(
+  // ThemeProvider required theme to be specified 
   <React.StrictMode>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Heebo"></link>
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
-      <App />
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Heebo"></link>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>
 );
 

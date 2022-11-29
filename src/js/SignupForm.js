@@ -21,11 +21,12 @@ const SignupForm = ({
     return (
         <div>
             <Box component="form" onSubmit={onSubmit}>
-                <hi>Sign Up</hi>
+                <h1>Sign Up</h1>
                 {errors.message && <p className="errorsText">{errors.message}</p>}
                 <TextField
                     name="username"
-                    floatingLabelText="Username"
+                    
+                    label="Username"
                     value={user.username}
                     onChange={onChange}
                     // error is whether it is in error state
@@ -35,7 +36,7 @@ const SignupForm = ({
                 />
                 <TextField 
                     name="email"
-                    floatingLabelText="Email"
+                    label="Email"
                     value={user.email}
                     onChange={onChange}
                     error={errors.email}
@@ -43,7 +44,7 @@ const SignupForm = ({
                 />
                 <TextField 
                     name="password"
-                    floatingLabelText="Password"
+                    label="Password"
                     value={user.password}
                     onChange={onChangePw}
                     error={errors.password}
@@ -64,7 +65,7 @@ const SignupForm = ({
                 />
                 <TextField 
                     name="confirmPw"
-                    floatingLabelText="Confirm Password"
+                    label="Confirm Password"
                     value={user.confirmpw}
                     onChange={onChange}
                     error={errors.confirmpw}
