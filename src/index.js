@@ -10,7 +10,10 @@ const root = ReactDOM.createRoot(
   document.getElementById('root')
 );
 
+
+
 root.render(
+  // ThemeProvider required theme to be specified 
   <React.StrictMode>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Heebo"></link>
     <BrowserRouter basename={process.env.PUBLIC_URL}>

@@ -1,8 +1,8 @@
 // Here we are importing all the required items.
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Eventology from './Logo_Banner.png';
-import './LoginPage.scss';
+import Eventology from '../assets/Logo_Banner.png';
+import '../scss/LoginPage.scss';
 
 
 

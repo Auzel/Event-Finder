@@ -1,0 +1,37 @@
+* {
+    // margin: 15px;
+}
+
+.formSignup {
+    width: 400px;
+    height: 100%;
+    margin: 0px auto;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    // border: 1px solid purple;
+    box-shadow: 0px 0px 2px black ;
+}
+
+h1 {
+    // font-size: 16px;
+
+    padding: 8px;
+}
+
+.component {
+    display: flex;
+    justify-content: center;
+    margin: 15px;
+    width: calc(100% - 30px);
+    // border: 1px solid black;
+    &.passwordDiv {
+        flex-direction: column;
+    }
+}
+
+.errorsText {
+    color: "red"
+}

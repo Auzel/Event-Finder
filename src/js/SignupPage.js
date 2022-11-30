@@ -1,6 +1,7 @@
 // Here we are importing all the required items.
 import React from 'react';
 import SignupForm from './SignupForm';
+const validator = require("validator");
 // import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 // import { Link } from 'react-router-dom';
 // import './Styles.scss';
@@ -41,8 +42,14 @@ class SignupPage extends React.Component
       showPw: false
     }
 
-    // bind the handlers to the form.
-    // this.pwMask = this.pwMask.bind(this);
+    // bind the handlers to 'this'.
+    this.handleChangeUsername = this.handleChangeUsername.bind(this);
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handlePwChange = this.handlePwChange.bind(this);
+    this.handleShowPw = this.handleShowPw.bind(this);
+    this.handleConfirmPwChange = this.handleConfirmPwChange.bind(this);
+    this.submitSignupForm = this.submitSignupForm.bind(this);
+    this.validateSignupForm = this.validateSignupForm.bind(this);
   }
 
   // Write the handlers and functionality for everything.
@@ -53,8 +60,43 @@ class SignupPage extends React.Component
    * 
    * @param {*} event the calling TextField
    */
-  handleChange(event) {
+  handleChangeUsername(event) {
+    // get the calling TextField
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
 
+
+    this.setState({
+      user
+    });
+  }
+
+  handleChangeEmail(event) {
+    // get the calling TextField
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
+
+
+    this.setState({
+      user
+    });
+
+    // Validate the email
+    let errors = this.state.errors;
+    if (
+      event.target.value &&
+      !validator.isEmail(event.target.value)
+    ) {
+      errors['email'] = "Please provide a correct email address.";
+    } else {
+      errors['email'] = "";
+    }
+
+    this.setState({
+      errors: errors
+    })
   }
 
   /**
@@ -65,7 +107,56 @@ class SignupPage extends React.Component
    * @param {*} event the calling TextField (should be the password)
    */
   handlePwChange(event) {
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
 
+    this.setState({
+      user
+    });
+
+    // Validate the password and update the state for radio icons accordingly
+    let isempty = event.target.value ? false : true;
+    let hasSpecialChar = this.containsSpecialChars(event.target.value);
+    let hasCorrectLen = (event.target.value && event.target.value.length >= 8) ? true : false;
+
+    let errors = this.state.errors;
+    if (isempty) {
+      errors.password = "";
+    } else if (!hasSpecialChar && !hasCorrectLen) {
+      errors.password = "Password must be greater than 8 characters and contain one special character.";
+    } else if (!hasSpecialChar) {
+      errors.password = "Password must contain one special character.";
+    } else if (!hasCorrectLen) {
+      errors.password = "Password must be greater than 8 characters.";
+    } else {
+      errors.password = ""
+    }
+
+    this.setState({
+      errors: errors
+    })
+  }
+
+  handleConfirmPwChange(event) {
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
+
+    this.setState({
+      user
+    });
+
+    let errors = this.state.errors;
+    if (event.target.value && (event.target.value !== this.state.user.password)) {
+      errors["confirmpw"] = "Passwords do not match.";
+    } else {
+      errors["confirmpw"] = "";
+    }
+
+    this.setState({
+      errors: errors
+    });
   }
 
   /**
@@ -74,7 +165,11 @@ class SignupPage extends React.Component
    * @param {*} event the icon which swaps visibility state of password chars. 
    */
   handleShowPw(event) {
-
+    event.preventDefault();
+    this.setState(state =>
+      Object.assign({}, state, {
+        showPw: !this.state.showPw
+      }))
   }
 
   /** 
@@ -86,7 +181,7 @@ class SignupPage extends React.Component
    * that will be submitted to the database.
    */
   submitSignupForm(user) {
-
+    console.log("submitting...");
   }
  
   /**
@@ -98,7 +193,27 @@ class SignupPage extends React.Component
    * @param {*} event the submit button
    */
   validateSignupForm(event) {
+    event.preventDefault();
+    let errors = this.state.errors;
+    if (errors) {
+      errors.message = "Please satisfy all requirements.";
+    } else {
+      // Actually submit the form
+      var user = {
+        usr: this.state.user.username,
+        pw: this.state.user.password,
+        email: this.state.user.email
+      }
+      this.submitSignupForm(user);
+    }
+    this.setState({
+      errors: errors
+    });
+  }
 
+  containsSpecialChars(str) {
+    const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    return specialChars.test(str);
   }
 
   render ()   // Here is the start of the render().
@@ -110,9 +225,11 @@ class SignupPage extends React.Component
           // Pass the state values and handler functions as parameters
           // to assign to each component.
           onSubmit={this.validateSignupForm}
-          onChange={this.handleChange}
+          onChangeUsername={this.handleChangeUsername}
+          onChangeEmail={this.handleChangeEmail}
           onChangePw={this.handlePwChange}
           onShowPw={this.handleShowPw}
+          onChangeConfirmPw={this.handleConfirmPwChange}
           errors={this.state.errors}
           user={this.state.user}
           pwVisibility={this.state.showPw}
@@ -122,4 +239,4 @@ class SignupPage extends React.Component
   }
 }
 
-export default SignupPage;   // Here we are exporting the class called Gallery.
+export default SignupPage;

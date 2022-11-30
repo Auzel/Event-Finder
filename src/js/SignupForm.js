@@ -1,6 +1,7 @@
 import React from "react";
-import { TextField, Button, Box, InputAdornment, IconButton } from "@mui/material";
+import { TextField, Button, InputAdornment, IconButton, FormHelperText } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material"
+import '../scss/SignupPage.scss'
 
 /**
  * SignupForm is not a component, but a function
@@ -11,67 +12,96 @@ import { Visibility, VisibilityOff } from "@mui/icons-material"
  */
 const SignupForm = ({
     onSubmit,
-    onChange,
+    onChangeUsername,
+    onChangeEmail,
     onChangePw,
     onShowPw,
+    onChangeConfirmPw,
     errors,
     user,
+    pwCheck,
     pwVisibility
 }) => {
+    // console.log(pwCheck.correctLen);
     return (
         <div>
-            <Box component="form" onSubmit={onSubmit}>
-                <hi>Sign Up</hi>
-                {errors.message && <p className="errorsText">{errors.message}</p>}
-                <TextField
-                    name="username"
-                    floatingLabelText="Username"
-                    value={user.username}
-                    onChange={onChange}
-                    // error is whether it is in error state
-                    error={errors.username}
-                    // helperText is the text shown on error
-                    helperText={errors.username}
-                />
-                <TextField 
-                    name="email"
-                    floatingLabelText="Email"
-                    value={user.email}
-                    onChange={onChange}
-                    error={errors.email}
-                    helperText={errors.email}
-                />
-                <TextField 
-                    name="password"
-                    floatingLabelText="Password"
-                    value={user.password}
-                    onChange={onChangePw}
-                    error={errors.password}
-                    helperText={errors.password}
-                    // Adds an icon at the end of the TextField to toggle visibility
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={onShowPw}
-                                >
-                                    {pwVisibility ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                />
-                <TextField 
-                    name="confirmPw"
-                    floatingLabelText="Confirm Password"
-                    value={user.confirmpw}
-                    onChange={onChange}
-                    error={errors.confirmpw}
-                    helperText={errors.confirmpw}
-                />
-                <Button type="submit">Submit</Button>
-            </Box>
+            <form onSubmit={onSubmit} className="formSignup">
+                <h1>Sign Up</h1>
+                <FormHelperText error={errors.message}>{errors.message}</FormHelperText>
+                <div className="component usernameDiv">
+                    <TextField
+                        variant="standard"
+                        fullWidth={true}
+                        className="input"
+                        name="username"
+                        label="Username"
+                        value={user.username}
+                        onChange={onChangeUsername}
+                        // error is whether it is in error state
+                        error={errors.username}
+                        // helperText is the text shown on error
+                        helperText={errors.username}
+                    />
+                </div>
+                <div className="component emailDiv">
+                    <TextField 
+                        variant="standard"
+                        fullWidth={true}
+                        className="input"
+                        name="email"
+                        label="Email"
+                        value={user.email}
+                        onChange={onChangeEmail}
+                        error={errors.email}
+                        helperText={errors.email}
+                    />
+                </div>
+                <div className="component passwordDiv">
+                    <TextField
+                        variant="standard"
+                        fullWidth={true}
+                        // "password" will have astricks, "input" will not
+                        type={pwVisibility ? "input" : "password"}
+                        // className="input password"
+                        name="password"
+                        label="Password"
+                        value={user.password}
+                        onChange={onChangePw}
+                        error={errors.password}
+                        helperText={errors.password}
+                        // Adds an icon at the end of the TextField to toggle visibility
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={onShowPw}
+                                    >
+                                        {pwVisibility ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+                </div>
+                <div className="component confirmPwDiv">
+                    <TextField 
+                        type="password"
+                        variant="standard"
+                        fullWidth={true}
+                        // className="input confirm"
+                        name="confirmpw"
+                        label="Confirm Password"
+                        value={user.confirmpw}
+                        onChange={onChangeConfirmPw}
+                        error={errors.confirmpw}
+                        helperText={errors.confirmpw}
+                    />
+                </div>
+                <div className="component submitDiv">
+                    <Button type="submit" className="buttonSubmit">Submit</Button>
+                </div>
+            </form>
         </div>
     );
 }
