@@ -2,6 +2,8 @@ import React from "react";
 import { TextField, Button, InputAdornment, IconButton, FormHelperText } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import '../scss/SignupPage.scss'
+import NavButton from "./NavButton";
+import SubmitButton from "./SubmitButton";
 
 /**
  * SignupForm is not a component, but a function
@@ -26,8 +28,8 @@ const SignupForm = ({
     return (
         <div>
             <form onSubmit={onSubmit} className="formSignup">
-                <h1>Sign Up</h1>
-                <FormHelperText error={errors.message}>{errors.message}</FormHelperText>
+                <h1>SIGN UP</h1>
+                <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
                 <div className="component usernameDiv">
                     <TextField
                         variant="standard"
@@ -38,7 +40,7 @@ const SignupForm = ({
                         value={user.username}
                         onChange={onChangeUsername}
                         // error is whether it is in error state
-                        error={errors.username}
+                        error={errors.username ? true : false}
                         // helperText is the text shown on error
                         helperText={errors.username}
                     />
@@ -52,7 +54,7 @@ const SignupForm = ({
                         label="Email"
                         value={user.email}
                         onChange={onChangeEmail}
-                        error={errors.email}
+                        error={errors.email ? true : false}
                         helperText={errors.email}
                     />
                 </div>
@@ -67,7 +69,7 @@ const SignupForm = ({
                         label="Password"
                         value={user.password}
                         onChange={onChangePw}
-                        error={errors.password}
+                        error={errors.password ? true : false}
                         helperText={errors.password}
                         // Adds an icon at the end of the TextField to toggle visibility
                         InputProps={{
@@ -94,12 +96,13 @@ const SignupForm = ({
                         label="Confirm Password"
                         value={user.confirmpw}
                         onChange={onChangeConfirmPw}
-                        error={errors.confirmpw}
+                        error={errors.confirmpw ? true : false}
                         helperText={errors.confirmpw}
                     />
                 </div>
                 <div className="component submitDiv">
-                    <Button type="submit" className="buttonSubmit">Submit</Button>
+                    <SubmitButton variant="small" text="SUBMIT" />
+                    {/* <Button type="submit" className="buttonSubmit">Submit</Button> */}
                 </div>
             </form>
         </div>

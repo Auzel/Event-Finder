@@ -1,7 +1,10 @@
 // Here we are importing all the required items.
 import React from 'react';
 import SignupForm from './SignupForm';
+import NavBar from "./NavBar.js"
+
 const validator = require("validator");
+
 // import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 // import { Link } from 'react-router-dom';
 // import './Styles.scss';
@@ -195,9 +198,22 @@ class SignupPage extends React.Component
   validateSignupForm(event) {
     event.preventDefault();
     let errors = this.state.errors;
-    if (errors) {
+    errors.message = "";
+    
+    let hasError = false;
+    for (const [key, value] of Object.entries(errors)) {
+      if (value != "") hasError = true;
+    }
+
+    let hasAllInfo = true;
+    for (const [key, value] of Object.entries(this.state.user)) {
+      if (value == "") hasAllInfo = false;
+    }
+
+    if (hasError || !hasAllInfo) {
       errors.message = "Please satisfy all requirements.";
     } else {
+      console.log("no errors");
       // Actually submit the form
       var user = {
         usr: this.state.user.username,
@@ -221,6 +237,7 @@ class SignupPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
+        <NavBar variant="blank" logoLink="/" />
         <SignupForm
           // Pass the state values and handler functions as parameters
           // to assign to each component.
