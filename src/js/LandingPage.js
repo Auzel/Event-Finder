@@ -1,8 +1,8 @@
 // Here we are importing all the required items.
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Eventology from './Logo_Banner.png';
-import './LandingPage.scss';
+import Eventology from '../assets/Logo_Banner.png';
+import '../scss/LandingPage.scss';
 
 // Here we are creating a react class called App.
 class LandingPage extends React.Component  

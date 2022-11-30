@@ -1,6 +1,7 @@
 // Here we are importing all the required items.
 import React from 'react';
 import SignupForm from './SignupForm';
+const validator = require("validator");
 // import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 // import { Link } from 'react-router-dom';
 // import './Styles.scss';
@@ -41,8 +42,13 @@ class SignupPage extends React.Component
       showPw: false
     }
 
-    // bind the handlers to the form.
-    // this.pwMask = this.pwMask.bind(this);
+    // bind the handlers to 'this'.
+    this.handleChange = this.handleChange.bind(this);
+    this.handlePwChange = this.handlePwChange.bind(this);
+    this.handleShowPw = this.handleShowPw.bind(this);
+    this.handleConfirmPwChange = this.handleConfirmPwChange.bind(this);
+    this.submitSignupForm = this.submitSignupForm.bind(this);
+    this.validateSignupForm = this.validateSignupForm.bind(this);
   }
 
   // Write the handlers and functionality for everything.
@@ -54,7 +60,16 @@ class SignupPage extends React.Component
    * @param {*} event the calling TextField
    */
   handleChange(event) {
+    // get the calling TextField
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
 
+    console.log(field, user);
+
+    this.setState({
+      user
+    });
   }
 
   /**
@@ -65,7 +80,38 @@ class SignupPage extends React.Component
    * @param {*} event the calling TextField (should be the password)
    */
   handlePwChange(event) {
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
 
+    this.setState({
+      user
+    });
+
+    // Validate the password and update the state for radio icons accordingly
+  }
+
+  handleConfirmPwChange(event) {
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
+
+    this.setState({
+      user
+    });
+
+    console.log(field, user);
+
+    const errors = this.state.errors;
+    if (event.target.value && (event.target.value != this.state.user.password)) {
+      errors["confirmpw"] = "Passwords do not match.";
+    } else {
+      errors["confirmpw"] = "";
+    }
+
+    this.setState({
+      errors: errors
+    });
   }
 
   /**
@@ -74,7 +120,12 @@ class SignupPage extends React.Component
    * @param {*} event the icon which swaps visibility state of password chars. 
    */
   handleShowPw(event) {
-
+    console.log("show");
+    event.preventDefault();
+    this.setState(state =>
+      Object.assign({}, state, {
+        showPw: !this.state.showPw
+      }))
   }
 
   /** 
@@ -113,6 +164,7 @@ class SignupPage extends React.Component
           onChange={this.handleChange}
           onChangePw={this.handlePwChange}
           onShowPw={this.handleShowPw}
+          onChangeConfirmPw={this.handleConfirmPwChange}
           errors={this.state.errors}
           user={this.state.user}
           pwVisibility={this.state.showPw}
