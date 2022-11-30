@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Button, InputAdornment, IconButton } from "@mui/material";
+import { TextField, Button, InputAdornment, IconButton, Checkbox, FormControlLabel } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import '../scss/SignupPage.scss'
 
@@ -12,14 +12,17 @@ import '../scss/SignupPage.scss'
  */
 const SignupForm = ({
     onSubmit,
-    onChange,
+    onChangeUsername,
+    onChangeEmail,
     onChangePw,
     onShowPw,
     onChangeConfirmPw,
     errors,
     user,
+    pwCheck,
     pwVisibility
 }) => {
+    // console.log(pwCheck.correctLen);
     return (
         <div>
             <form onSubmit={onSubmit} className="formSignup">
@@ -33,7 +36,7 @@ const SignupForm = ({
                         name="username"
                         label="Username"
                         value={user.username}
-                        onChange={onChange}
+                        onChange={onChangeUsername}
                         // error is whether it is in error state
                         error={errors.username}
                         // helperText is the text shown on error
@@ -48,7 +51,7 @@ const SignupForm = ({
                         name="email"
                         label="Email"
                         value={user.email}
-                        onChange={onChange}
+                        onChange={onChangeEmail}
                         error={errors.email}
                         helperText={errors.email}
                     />

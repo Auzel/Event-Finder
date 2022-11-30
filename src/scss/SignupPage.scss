@@ -27,4 +27,7 @@ h1 {
     margin: 15px;
     width: calc(100% - 30px);
     // border: 1px solid black;
+    &.passwordDiv {
+        flex-direction: column;
+    }
 }

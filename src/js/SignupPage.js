@@ -43,7 +43,8 @@ class SignupPage extends React.Component
     }
 
     // bind the handlers to 'this'.
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeUsername = this.handleChangeUsername.bind(this);
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handlePwChange = this.handlePwChange.bind(this);
     this.handleShowPw = this.handleShowPw.bind(this);
     this.handleConfirmPwChange = this.handleConfirmPwChange.bind(this);
@@ -59,17 +60,43 @@ class SignupPage extends React.Component
    * 
    * @param {*} event the calling TextField
    */
-  handleChange(event) {
+  handleChangeUsername(event) {
     // get the calling TextField
     const field = event.target.name;
     const user = this.state.user;
     user[field] = event.target.value;
 
-    console.log(field, user);
 
     this.setState({
       user
     });
+  }
+
+  handleChangeEmail(event) {
+    // get the calling TextField
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
+
+
+    this.setState({
+      user
+    });
+
+    // Validate the email
+    let errors = this.state.errors;
+    if (
+      event.target.value &&
+      !validator.isEmail(event.target.value)
+    ) {
+      errors['email'] = "Please provide a correct email address.";
+    } else {
+      errors['email'] = "";
+    }
+
+    this.setState({
+      errors: errors
+    })
   }
 
   /**
@@ -89,6 +116,26 @@ class SignupPage extends React.Component
     });
 
     // Validate the password and update the state for radio icons accordingly
+    let isempty = event.target.value ? false : true;
+    let hasSpecialChar = this.containsSpecialChars(event.target.value);
+    let hasCorrectLen = (event.target.value && event.target.value.length >= 8) ? true : false;
+
+    let errors = this.state.errors;
+    if (isempty) {
+      errors.password = "";
+    } else if (!hasSpecialChar && !hasCorrectLen) {
+      errors.password = "Password must be greater than 8 characters and contain one special character.";
+    } else if (!hasSpecialChar) {
+      errors.password = "Password must contain one special character.";
+    } else if (!hasCorrectLen) {
+      errors.password = "Password must be greater than 8 characters.";
+    } else {
+      errors.password = ""
+    }
+
+    this.setState({
+      errors: errors
+    })
   }
 
   handleConfirmPwChange(event) {
@@ -100,9 +147,7 @@ class SignupPage extends React.Component
       user
     });
 
-    console.log(field, user);
-
-    const errors = this.state.errors;
+    let errors = this.state.errors;
     if (event.target.value && (event.target.value != this.state.user.password)) {
       errors["confirmpw"] = "Passwords do not match.";
     } else {
@@ -120,7 +165,6 @@ class SignupPage extends React.Component
    * @param {*} event the icon which swaps visibility state of password chars. 
    */
   handleShowPw(event) {
-    console.log("show");
     event.preventDefault();
     this.setState(state =>
       Object.assign({}, state, {
@@ -152,6 +196,11 @@ class SignupPage extends React.Component
 
   }
 
+  containsSpecialChars(str) {
+    const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    return specialChars.test(str);
+  }
+
   render ()   // Here is the start of the render().
   {
     // Here we are returning the format of the List View.
@@ -161,7 +210,8 @@ class SignupPage extends React.Component
           // Pass the state values and handler functions as parameters
           // to assign to each component.
           onSubmit={this.validateSignupForm}
-          onChange={this.handleChange}
+          onChangeUsername={this.handleChangeUsername}
+          onChangeEmail={this.handleChangeEmail}
           onChangePw={this.handlePwChange}
           onShowPw={this.handleShowPw}
           onChangeConfirmPw={this.handleConfirmPwChange}
