@@ -15,6 +15,7 @@ const SignupForm = ({
     onChange,
     onChangePw,
     onShowPw,
+    onChangeConfirmPw,
     errors,
     user,
     pwVisibility
@@ -56,6 +57,8 @@ const SignupForm = ({
                     <TextField
                         variant="standard"
                         fullWidth={true}
+                        // "password" will have astricks, "input" will not
+                        type={pwVisibility ? "input" : "password"}
                         // className="input password"
                         name="password"
                         label="Password"
@@ -80,13 +83,14 @@ const SignupForm = ({
                 </div>
                 <div className="component confirmPwDiv">
                     <TextField 
+                        type="password"
                         variant="standard"
                         fullWidth={true}
                         // className="input confirm"
-                        name="confirmPw"
+                        name="confirmpw"
                         label="Confirm Password"
                         value={user.confirmpw}
-                        onChange={onChange}
+                        onChange={onChangeConfirmPw}
                         error={errors.confirmpw}
                         helperText={errors.confirmpw}
                     />
