@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Button, InputAdornment, IconButton, Checkbox, FormControlLabel } from "@mui/material";
+import { TextField, Button, InputAdornment, IconButton, FormHelperText } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import '../scss/SignupPage.scss'
 
@@ -27,7 +27,7 @@ const SignupForm = ({
         <div>
             <form onSubmit={onSubmit} className="formSignup">
                 <h1>Sign Up</h1>
-                {errors.message && <p className="errorsText">{errors.message}</p>}
+                <FormHelperText error={errors.message}>{errors.message}</FormHelperText>
                 <div className="component usernameDiv">
                     <TextField
                         variant="standard"

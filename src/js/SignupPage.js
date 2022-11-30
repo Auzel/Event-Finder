@@ -148,7 +148,7 @@ class SignupPage extends React.Component
     });
 
     let errors = this.state.errors;
-    if (event.target.value && (event.target.value != this.state.user.password)) {
+    if (event.target.value && (event.target.value !== this.state.user.password)) {
       errors["confirmpw"] = "Passwords do not match.";
     } else {
       errors["confirmpw"] = "";
@@ -181,7 +181,7 @@ class SignupPage extends React.Component
    * that will be submitted to the database.
    */
   submitSignupForm(user) {
-
+    console.log("submitting...");
   }
  
   /**
@@ -193,7 +193,22 @@ class SignupPage extends React.Component
    * @param {*} event the submit button
    */
   validateSignupForm(event) {
-
+    event.preventDefault();
+    let errors = this.state.errors;
+    if (errors) {
+      errors.message = "Please satisfy all requirements.";
+    } else {
+      // Actually submit the form
+      var user = {
+        usr: this.state.user.username,
+        pw: this.state.user.password,
+        email: this.state.user.email
+      }
+      this.submitSignupForm(user);
+    }
+    this.setState({
+      errors: errors
+    });
   }
 
   containsSpecialChars(str) {
@@ -224,4 +239,4 @@ class SignupPage extends React.Component
   }
 }
 
-export default SignupPage;   // Here we are exporting the class called Gallery.
+export default SignupPage;
