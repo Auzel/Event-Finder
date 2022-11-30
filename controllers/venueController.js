@@ -38,6 +38,7 @@ const getVenueList = function(req, res) {
 
 
 const getVenue = function(req, res) {
+    
 }
 
 

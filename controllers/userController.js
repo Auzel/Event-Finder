@@ -42,6 +42,7 @@ const createUser = function(req, res) {
 
 
 const getUser = function(req, res) {
+    
 }
 
 
