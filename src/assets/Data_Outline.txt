@@ -1,0 +1,8 @@
+Title
+Location
+Venue
+Date
+Rating
+Image
+Description
+Review ids

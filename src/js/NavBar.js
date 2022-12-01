@@ -31,10 +31,10 @@ export default class NavBar extends React.Component {
                     {this.logoImg()}
                     <div className='navButtons'>
                         <div className='navBarButtonDiv'>
-                            <NavButton className="navBarButton" buttonLink="/" variant="small" text="ACCOUNT"/>
+                            <NavButton className="navBarButton" to="/" variant="small" text="ACCOUNT"/>
                         </div>
                         <div className='navBarButtonDiv'>
-                            <NavButton className="navBarButton" buttonLink="/" variant="small" text="LOGOUT"/>
+                            <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>
                         </div>
                     </div>
                 </div>
@@ -44,6 +44,10 @@ export default class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {
-    logoLink: PropTypes.string.isRequired,
+    logoLink: PropTypes.string,
     variant: PropTypes.string
+}
+
+NavBar.defaultProps = {
+    logoLink: "/"
 }
