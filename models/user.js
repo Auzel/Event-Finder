@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
 const {v1: uuidv1} = require("uuid")
+const uniqueValidator = require('mongoose-unique-validator');
 
 var UserSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    username: {type: String, required: true},
+    username: {type: String, required: true, unique: true, dropDups: true},
     encryptedPassword: {type: String, required: true},
     email: {type: String, required: true, unique: true, dropDups: true},
     eventPrefs: {type: [String], required: true},
@@ -36,5 +37,7 @@ UserSchema.methods = {
         }
     }
 }
+
+UserSchema.plugin(uniqueValidator, {message: '{PATH} must be unique'});
 
 module.exports = mongoose.model('User', UserSchema);

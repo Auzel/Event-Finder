@@ -3,7 +3,6 @@ const message = require('../models/message');
 const User = require("../models/user");
 const {validationResult} = require('express-validator');
 const jsonwebtoken = require('jsonwebtoken');
-const expressJwt = require('express-jwt');
 
 const createUser = function(req, res) {
     const errors = validationResult(req);
@@ -14,7 +13,7 @@ const createUser = function(req, res) {
     const user = new User(req.body);
     user.save((err, user) => {
         if (err) {
-            return res.status(400).json(message.response("Email already exists", {}));
+            return res.status(400).json(message.response(err.message, {}));
         }
 
         const {_id, username, email} = user;
