@@ -35,7 +35,6 @@ export default class LoginPage extends React.Component
       errors: {},
       // Contains the key/value pairs for inputed values.
       user: {
-        username: "",
         email: "",
         password: "",
       },
@@ -194,7 +193,7 @@ export default class LoginPage extends React.Component
         pw: this.state.user.password,
         email: this.state.user.email
       }
-      this.submitSignupForm(user);
+      this.submitLoginForm(user);
     }
     this.setState({
       errors: errors

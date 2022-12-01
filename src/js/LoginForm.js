@@ -25,7 +25,7 @@ const LoginForm = ({
             <form onSubmit={onSubmit} className="formLogin">
                 <h1>LOGIN</h1>
                 <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
-                <div className="component usernameDiv">
+                {/* <div className="component usernameDiv">
                     <TextField
                         variant="standard"
                         fullWidth={true}
@@ -39,7 +39,7 @@ const LoginForm = ({
                         // helperText is the text shown on error
                         helperText={errors.username}
                     />
-                </div>
+                </div> */}
                 <div className="component emailDiv">
                     <TextField 
                         variant="standard"
