@@ -1,6 +1,6 @@
 
 
-class Query {
+class Query { 
     constructor(query) {
         this.query_object = {};
         this.aggregation = [];

@@ -1,28 +1,19 @@
 // Here we are importing all the required items.
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Eventology from './Logo_Banner.png';
-import './LandingPage.scss';
+import NavBar from './NavBar';
+import Eventology from "../assets/Logo_Banner.png"
+import '../scss/LandingPage.scss';
+import NavButton from './NavButton';
 
-// Here we are creating a react class called App.
 class LandingPage extends React.Component  
 {
- 
-  render ()   // Here is the start of the render().
+  render ()
   {
-    // Here we are returning the format of the List View.
     return (
         <div>
 
-          <div className="header">
-
-            <Link to={'/'}>
-
-              <img src={Eventology} className='headerImage' alt="HI"/>
-
-            </Link>
-
-          </div>
+          <NavBar variant="blank" logoLink="/" />
 
           <br></br>
           <br></br>
@@ -41,11 +32,8 @@ class LandingPage extends React.Component
               <br></br>
 
               <div className="links">
-
-                <Link className="LoginPageLink" to={'/LoginPage'}>Login</Link>
-
-                <Link className="SignupPageLink" to={'/SignupPage'}>Signup</Link>
-
+                <NavButton className="LoginPageLink" to={'/LoginPage'} text="LOGIN" variant="large"/>
+                <NavButton className="SignupPageLink" to={'/SignupPage'} text="SIGN UP" variant="large"/>
               </div>
 
             </div>

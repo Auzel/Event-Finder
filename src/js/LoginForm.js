@@ -1,10 +1,8 @@
 import React from "react";
-import { TextField, Button, InputAdornment, IconButton, FormHelperText } from "@mui/material";
+import { TextField, InputAdornment, IconButton, FormHelperText } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material"
-import '../scss/SignupPage.scss'
-import NavButton from "./NavButton";
+import '../scss/LoginPage.scss'
 import SubmitButton from "./SubmitButton";
-
 /**
  * SignupForm is not a component, but a function
  * that returns the react layout after assigning
@@ -12,23 +10,20 @@ import SubmitButton from "./SubmitButton";
  * component. This is simply a way to make the
  * code more segmented and readable.
  */
-const SignupForm = ({
+const LoginForm = ({
     onSubmit,
     onChangeUsername,
     onChangeEmail,
     onChangePw,
     onShowPw,
-    onChangeConfirmPw,
     errors,
     user,
-    pwCheck,
     pwVisibility
 }) => {
-    // console.log(pwCheck.correctLen);
     return (
         <div>
-            <form onSubmit={onSubmit} className="formSignup">
-                <h1>SIGN UP</h1>
+            <form onSubmit={onSubmit} className="formLogin">
+                <h1>LOGIN</h1>
                 <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
                 <div className="component usernameDiv">
                     <TextField
@@ -86,20 +81,6 @@ const SignupForm = ({
                         }}
                     />
                 </div>
-                <div className="component confirmPwDiv">
-                    <TextField 
-                        type="password"
-                        variant="standard"
-                        fullWidth={true}
-                        // className="input confirm"
-                        name="confirmpw"
-                        label="Confirm Password"
-                        value={user.confirmpw}
-                        onChange={onChangeConfirmPw}
-                        error={errors.confirmpw ? true : false}
-                        helperText={errors.confirmpw}
-                    />
-                </div>
                 <div className="component submitDiv">
                     <SubmitButton variant="small" text="SUBMIT" />
                     {/* <Button type="submit" className="buttonSubmit">Submit</Button> */}
@@ -109,4 +90,4 @@ const SignupForm = ({
     );
 }
 
-export default SignupForm;
+export default LoginForm;
