@@ -31,7 +31,38 @@ export default class NavBar extends React.Component {
                     {this.logoImg()}
                     <div className='navButtons'>
                         <div className='navBarButtonDiv'>
-                            <NavButton className="navBarButton" to="/" variant="small" text="ACCOUNT"/>
+                            <NavButton className="navBarButton" to="/AccountInformation" variant="small" text="ACCOUNT"/>
+                        </div>
+                        <div className='navBarButtonDiv'>
+                            <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>
+                        </div>
+                    </div>
+                </div>
+            )
+        } else if (this.props.variant == "account") {
+            return (
+                <div className='navBar'>
+                    {this.logoImg()}
+                    <div className='navButtons'>
+                        <div className='navBarButtonDiv'>
+                            <NavButton className="navBarButton" to="/Map" variant="small" text="MAP"/>
+                        </div>
+                        <div className='navBarButtonDiv'>
+                            <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>
+                        </div>
+                    </div>
+                </div>
+            )
+        } else if (this.props.variant == "review") {
+            return (
+                <div className='navBar'>
+                    {this.logoImg()}
+                    <div className='navButtons'>
+                        <div className='navBarButtonDiv'>
+                            <NavButton className="navBarButton" to="/AccountInformation" variant="small" text="ACCOUNT"/>
+                        </div>
+                        <div className='navBarButtonDiv'>
+                            <NavButton className="navBarButton" to="/Map" variant="small" text="MAP"/>
                         </div>
                         <div className='navBarButtonDiv'>
                             <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>

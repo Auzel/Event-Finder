@@ -1,9 +1,9 @@
 // Here we are importing all the required items.
 import React from 'react';
-// import { Link } from 'react-router-dom';
-// import './Styles.scss';
-// import List from './List';
-// import axios from 'axios';
+import NavBar from "./NavBar.js";
+import "../scss/EditAccount.scss";
+import { Link } from 'react-router-dom';
+
 
 // Here we are creating a react class called App.
 class EditAccount extends React.Component  
@@ -14,7 +14,25 @@ class EditAccount extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
-            Edit Account
+        
+        <NavBar variant="account" logoLink="/" />
+
+        <div class="sideBar">
+
+          <div class="informationDiv">
+
+            <Link to = "/AccountInformation" className = "AccountInformationLink"> Information </Link>
+
+          </div>
+
+          <div class="HistoryDiv">
+
+            <Link to = "/AccountHistory" className = "AccountHistoryLink"> History </Link>
+
+          </div>
+          
+        </div>
+
       </div>
     );
   }
