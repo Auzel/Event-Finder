@@ -9,5 +9,10 @@ export const globalTheme = createTheme({
         //         variant: "standard"
         //     }
         // },
+        MuiFormHelperText: {
+            defaultProps: {
+                margin: 0
+            }
+        }
     }
 })

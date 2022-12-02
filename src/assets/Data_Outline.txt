@@ -1,8 +1,10 @@
-Title
-Location
-Venue
+event_id
+event _title
+venue_location
+Venue_id
 Date
-Rating
 Image
 Description
+
+Rating
 Review ids

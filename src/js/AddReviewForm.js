@@ -1,8 +1,13 @@
 import React from "react";
-import { TextField, InputAdornment, IconButton, FormHelperText } from "@mui/material";
+import { TextField, InputAdornment, IconButton, FormHelperText, FormControl } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import '../scss/AddReviewPage.scss'
 import SubmitButton from "./SubmitButton";
+import { Rating } from "@mui/material";
+import dayjs, { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 /**
  * SignupForm is not a component, but a function
  * that returns the react layout after assigning
@@ -22,63 +27,95 @@ const AddReviewForm = ({
     return (
         <div>
             <form onSubmit={onSubmit} className="formReview">
-                <h1>Add Review</h1>
+                <h1>ADD REVIEW</h1>
                 <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
                 <div className="component ratingDiv">
-                    <TextField 
-                        variant="standard"
-                        fullWidth={true}
-                        className="input"
-                        name="rating"
-                        label="Rating"
-                        value={review.rating}
-                        onChange={onChangeRating}
-                        error={errors.rating ? true : false}
-                        helperText={errors.rating}
-                    />
+                    <FormControl className="formControl">
+                        <FormHelperText className="component-helper-text">
+                            How would you rate this venue?
+                        </FormHelperText>
+                        <Rating
+                            name="rating"
+                            onChange={onChangeRating}
+                            size="large"
+                            value={review.rating}
+                            precision={0.5} 
+                            error={errors.rating ? true : false}
+                            helperText={errors.rating}
+                        />
+                    </FormControl>
                 </div>
                 <div className="component titleDiv">
-                    <TextField 
-                        variant="standard"
-                        fullWidth={true}
-                        className="input"
-                        name="title"
-                        label="Title"
-                        value={review.title}
-                        onChange={onChangeTitle}
-                        error={errors.title ? true : false}
-                        helperText={errors.title}
-                    />
+                    <FormControl className="formControl">
+                        <FormHelperText className="component-helper-text">
+                            What event did you attend at this venue?
+                        </FormHelperText>
+                        <TextField 
+                            variant="standard"
+                            fullWidth={true}
+                            className="input"
+                            name="title"
+                            placeholder="Title"
+                            value={review.title}
+                            onChange={onChangeTitle}
+                            error={errors.title ? true : false}
+                            helperText={errors.title}
+                        />
+                    </FormControl>
                 </div>
                 <div className="component dateDiv">
-                    <TextField 
-                        variant="standard"
-                        fullWidth={true}
-                        className="input"
-                        name="date"
-                        label="Date"
-                        value={review.date}
-                        onChange={onChangeDate}
-                        error={errors.date ? true : false}
-                        helperText={errors.date}
-                    />
+                    <FormControl className="formControl">
+                        <FormHelperText className="component-helper-text">
+                            What date did you attend the event?
+                        </FormHelperText>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                                inputFormat="MM/DD/YYYY"
+                                value={review.date.format()}
+                                onChange={onChangeDate}
+                                renderInput={(params) => <TextField {...params} />}
+                                />
+                        </LocalizationProvider>
+                        {/* <TextField 
+                            variant="standard"
+                            fullWidth={true}
+                            className="input"
+                            name="date"
+                            // label="Date"
+                            placeholder="Date"
+                            value={review.date}
+                            onChange={onChangeDate}
+                            error={errors.date ? true : false}
+                            helperText={errors.date}
+                        /> */}
+                    </FormControl>
                 </div>
                 <div className="component descriptionDiv">
-                    <TextField 
-                        variant="standard"
-                        fullWidth={true}
-                        className="input"
-                        name="description"
-                        label="Description"
-                        value={review.description}
-                        onChange={onChangeDescription}
-                        error={errors.description ? true : false}
-                        helperText={errors.description}
-                    />
+                    <FormControl className="formControl">
+                        <FormHelperText id="component-helper-text">
+                            Describe your experience at this event.
+                        </FormHelperText>
+                        <TextField 
+                            variant="outlined"
+                            fullWidth={true}
+                            className="input"
+                            name="description"
+                            placeholder="Description"
+                            // Maxes this a multiline text input component
+                            multiline
+                            minRows={2}
+                            maxRows={4}
+                            value={review.description}
+                            onChange={onChangeDescription}
+                            error={errors.description ? true : false}
+                            helperText={errors.description}
+                            // Set max chracters for the input
+                            inputProps={{maxLength: 140}}
+                        />
+                    </FormControl>
                 </div>
                 <div className="component submitDiv">
                     <SubmitButton variant="small" text="SUBMIT" />
-                    {/* <Button type="submit" className="buttonSubmit">Submit</Button> */}
                 </div>
             </form>
         </div>

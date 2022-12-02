@@ -1,3 +1,5 @@
+@import "./styles.scss";
+
 * {
     // margin: 15px;
 }
@@ -14,6 +16,24 @@
     // border: 1px solid purple;
     // box-shadow: 0px 0px 2px black ;
 }
+
+.formControl {
+    width: 100%;
+}
+
+.MuiFormHelperText-root {
+    margin-left: 0 !important;
+}
+
+// .MuiFormHelperText-root {
+//     margin: 0;
+//     padding: 0;
+// }
+
+// p {
+//     margin: 0;
+//     padding: 0;
+// }
 
 h1 {
     // font-size: 16px;
@@ -40,4 +60,34 @@ h1 {
         justify-content: space-between;
         // border: 1px solid red;
     }
+    &.ratingDiv {
+        width: auto;
+        align-self: flex-start;
+        // margin: 0;
+    }
+}
+
+.MuiRating-sizeLarge {
+    color: white;
+    // font-
+    stroke: white !important;
+}
+
+.MuiRating-root {
+    font-size: 3rem !important;
+    // stroke-co: 1px !important;
+}
+
+.MuiRating-iconEmpty {
+    border: 0;
+    // stroke-width: 3px !important;
+    // font-weight: 900;
+}
+
+.MuiRating-icon {
+    font-style: "normal" !important;
+}
+
+.MuiRating-icon {
+    color: $compliment
 }

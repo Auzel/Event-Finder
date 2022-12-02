@@ -4,7 +4,7 @@ import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import AccountInformation from './AccountInformation';
 import AccountHistory from './AccountHistory';
-import EditAccount from './EditAccount';
+import EditAccountPage from './EditAccountPage';
 import AddReviewPage from './AddReviewPage';
 import EditReviewPage from './EditReviewPage';
 import Map from './Map';
@@ -24,7 +24,7 @@ function App() {
             <Route path = '/SignupPage' element ={<SignupPage/>}/>
             <Route path = '/AccountInformation' element = {<AccountInformation/>}/>
             <Route path = '/AccountHistory' element ={<AccountHistory/>}/>
-            <Route path = '/EditAccount' element = {<EditAccount/>}/>
+            <Route path = '/EditAccountPage' element = {<EditAccountPage/>}/>
             <Route path = '/Map' element ={<Map/>}/>
             <Route path = '/AddReviewPage' element ={<AddReviewPage/>}/>
             <Route path = '/EditReviewPage' element ={<EditReviewPage/>}/>

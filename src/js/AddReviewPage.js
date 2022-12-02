@@ -2,6 +2,7 @@
 import React from 'react';
 import AddReviewForm from './AddReviewForm';
 import NavBar from "./NavBar.js"
+import dayjs from 'dayjs';
 
 const validator = require("validator");
 
@@ -37,7 +38,7 @@ export default class AddReviewPage extends React.Component
       review: {
         rating: "",
         title: "",
-        date: "",
+        date: dayjs(),
         description: ""
       },
     }
@@ -103,14 +104,21 @@ export default class AddReviewPage extends React.Component
    * 
    * @param {*} event the calling TextField (should be the password)
    */
-   handleChangeDate(event) {
-    const field = event.target.name;
-    const review = this.state.review;
-    review[field] = event.target.value;
-
+   handleChangeDate(newDate) {
+    // console.log(event);
+    let review = this.state.review;
+    review.date = newDate;
     this.setState({
-      review
-    });
+      review: review
+    })
+
+    // const field = event.target.name;
+    // const review = this.state.review;
+    // review[field] = event.target.value;
+
+    // this.setState({
+    //   review
+    // });
 
     // // Validate the password and update the state for radio icons accordingly
     // let isempty = event.target.value ? false : true;
@@ -196,7 +204,7 @@ export default class AddReviewPage extends React.Component
         date: this.state.review.date,
         description: this.state.review.description
       }
-      this.submitLoginForm(review);
+      this.submitReviewForm(review);
     }
     this.setState({
       errors: errors
@@ -208,7 +216,7 @@ export default class AddReviewPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
-        <NavBar variant="review" logoLink="/" />
+        <NavBar variant="blank" logoLink="/" />
         <AddReviewForm
           // Pass the state values and handler functions as parameters
           // to assign to each component.
