@@ -6,7 +6,7 @@ module.exports = function (router) {
     var signupRoute = router.route('/signup');
     var signinRoute = router.route('/signin');
     var signoutRoute = router.route('/signout');
-    var specifiedUserRoute = router.route('/users/:username')
+    var userRoute = router.route('/users')
 
     signupRoute.post([
         check("name", "Name cannot be empty").isLength({min: 1}),
@@ -14,11 +14,10 @@ module.exports = function (router) {
         check("email", "Email should be valid").isEmail(),
         check("password", "Password must be at least 6 characters").isLength({min: 6})
     ], userController.createUser);
-
     signinRoute.post(userController.signin);
     signoutRoute.get(userController.signout);
-    // specifiedUserRoute.get((req, res) => userController.getUser(req, res));
-    // specifiedUserRoute.put((req, res) => userController.replaceUser(req, res));
+    userRoute.get(userController.getUser);
+    userRoute.put(userController.replaceUser);
 
     return router;
 }

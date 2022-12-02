@@ -8,7 +8,7 @@ var EventSchema = new mongoose.Schema({
 });
 
 // Export the Mongoose model
-event = mongoose.model('Event', EventSchema);
+var event = mongoose.model('Event', EventSchema);
 module.exports.event = event;
 
 

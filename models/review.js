@@ -3,12 +3,18 @@ var mongoose = require('mongoose');
 
 // Define our review schema
 var ReviewSchema = new mongoose.Schema({
-    name: {type: String, required: true}
-    // add more here
+    name: {type: String, required: true},
+    user_id: {type: String, requred: true},
+    venue_id: {type: String, required: true},
+    rating: {type: int, required: true},
+    short_comment: {type: String, required: false},
+    long_comment: {type: String, required: false},
+    eventAttendedName: {type: String, required: false},
+    eventAttendedDate: {type: String, required: false},
 });
 
 // Export the Mongoose model
-review = mongoose.model('Review', ReviewSchema);
+var review = mongoose.model('Review', ReviewSchema);
 module.exports.review = review;
 
 
