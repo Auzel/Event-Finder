@@ -17,7 +17,7 @@ module.exports = function (router) {
     signinRoute.post(userController.signin);
     signoutRoute.get(userController.signout);
     userRoute.get(userController.getUser);
-    // specifiedUserRoute.put((req, res) => userController.replaceUser(req, res));
+    userRoute.put(userController.replaceUser);
 
     return router;
 }
