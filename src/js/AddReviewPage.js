@@ -34,21 +34,21 @@ export default class AddReviewPage extends React.Component
       // name and the value to the error message to display.
       errors: {},
       // Contains the key/value pairs for inputed values.
-      user: {
-        email: "",
-        password: "",
+      review: {
+        rating: "",
+        title: "",
+        date: "",
+        description: ""
       },
-      // Value for whether the password should be astricts
-      showPw: false
     }
 
     // bind the handlers to 'this'.
-    this.handleChangeUsername = this.handleChangeUsername.bind(this);
-    this.handleChangeEmail = this.handleChangeEmail.bind(this);
-    this.handlePwChange = this.handlePwChange.bind(this);
-    this.handleShowPw = this.handleShowPw.bind(this);
-    this.submitLoginForm = this.submitLoginForm.bind(this);
-    this.validateLoginForm = this.validateLoginForm.bind(this);
+    this.handleChangeRating = this.handleChangeRating.bind(this);
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
+    this.handleChangeDate = this.handleChangeDate.bind(this);
+    this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.submitReviewForm = this.submitReviewForm.bind(this);
+    this.validateReviewForm = this.validateReviewForm.bind(this);
   }
 
   // Write the handlers and functionality for everything.
@@ -59,41 +59,41 @@ export default class AddReviewPage extends React.Component
    * 
    * @param {*} event the calling TextField
    */
-  handleChangeUsername(event) {
+   handleChangeRating(event) {
     // get the calling TextField
     const field = event.target.name;
-    const user = this.state.user;
-    user[field] = event.target.value;
+    const review = this.state.review;
+    review[field] = event.target.value;
 
     this.setState({
-      user
+      review
     });
   }
 
-  handleChangeEmail(event) {
+  handleChangeTitle(event) {
     // get the calling TextField
     const field = event.target.name;
-    const user = this.state.user;
-    user[field] = event.target.value;
+    const review = this.state.review;
+    review[field] = event.target.value;
 
     this.setState({
-      user
+      review
     });
 
-    // Validate the email
-    let errors = this.state.errors;
-    if (
-      event.target.value &&
-      !validator.isEmail(event.target.value)
-    ) {
-      errors['email'] = "Please provide a correct email address.";
-    } else {
-      errors['email'] = "";
-    }
+    // // Validate the email
+    // let errors = this.state.errors;
+    // if (
+    //   event.target.value &&
+    //   !validator.isEmail(event.target.value)
+    // ) {
+    //   errors['email'] = "Please provide a correct email address.";
+    // } else {
+    //   errors['email'] = "";
+    // }
 
-    this.setState({
-      errors: errors
-    })
+    // this.setState({
+    //   errors: errors
+    // })
   }
 
   /**
@@ -103,13 +103,13 @@ export default class AddReviewPage extends React.Component
    * 
    * @param {*} event the calling TextField (should be the password)
    */
-  handlePwChange(event) {
+   handleChangeDate(event) {
     const field = event.target.name;
-    const user = this.state.user;
-    user[field] = event.target.value;
+    const review = this.state.review;
+    review[field] = event.target.value;
 
     this.setState({
-      user
+      review
     });
 
     // // Validate the password and update the state for radio icons accordingly
@@ -140,12 +140,14 @@ export default class AddReviewPage extends React.Component
    * 
    * @param {*} event the icon which swaps visibility state of password chars. 
    */
-  handleShowPw(event) {
-    event.preventDefault();
-    this.setState(state =>
-      Object.assign({}, state, {
-        showPw: !this.state.showPw
-      }))
+   handleChangeDescription(event) {
+    const field = event.target.name;
+    const review = this.state.review;
+    review[field] = event.target.value;
+
+    this.setState({
+      review
+    });
   }
 
   /** 
@@ -156,7 +158,7 @@ export default class AddReviewPage extends React.Component
    * @param {dictionary} user Key/value pairs for username, password, email
    * that will be submitted to the database.
    */
-  submitLoginForm(user) {
+  submitReviewForm(review) {
     console.log("submitting...");
   }
  
@@ -168,7 +170,7 @@ export default class AddReviewPage extends React.Component
    * 
    * @param {*} event the submit button
    */
-  validateLoginForm(event) {
+   validateReviewForm(event) {
     event.preventDefault();
     let errors = this.state.errors;
     errors.message = "";
@@ -179,7 +181,7 @@ export default class AddReviewPage extends React.Component
     }
 
     let hasAllInfo = true;
-    for (const [key, value] of Object.entries(this.state.user)) {
+    for (const [key, value] of Object.entries(this.state.review)) {
       if (value == "") hasAllInfo = false;
     }
 
@@ -188,12 +190,13 @@ export default class AddReviewPage extends React.Component
     } else {
       console.log("no errors");
       // Actually submit the form
-      var user = {
-        usr: this.state.user.username,
-        pw: this.state.user.password,
-        email: this.state.user.email
+      var review = {
+        rating: this.state.review.rating,
+        title: this.state.review.title,
+        date: this.state.review.date,
+        description: this.state.review.description
       }
-      this.submitLoginForm(user);
+      this.submitLoginForm(review);
     }
     this.setState({
       errors: errors
@@ -209,14 +212,13 @@ export default class AddReviewPage extends React.Component
         <AddReviewForm
           // Pass the state values and handler functions as parameters
           // to assign to each component.
-          onSubmit={this.validateLoginForm}
-          onChangeUsername={this.handleChangeUsername}
-          onChangeEmail={this.handleChangeEmail}
-          onChangePw={this.handlePwChange}
-          onShowPw={this.handleShowPw}
+          onSubmit={this.validateReviewForm}
+          onChangeRating={this.handleChangeRating}
+          onChangeTitle={this.handleChangeTitle}
+          onChangeDate={this.handleChangeDate}
+          onChangeDescription={this.handleChangeDescription}
           errors={this.state.errors}
-          user={this.state.user}
-          pwVisibility={this.state.showPw}
+          review={this.state.review}
         />
       </div>
     );

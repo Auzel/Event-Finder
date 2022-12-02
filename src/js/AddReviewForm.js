@@ -12,73 +12,68 @@ import SubmitButton from "./SubmitButton";
  */
 const AddReviewForm = ({
     onSubmit,
-    onChangeUsername,
-    onChangeEmail,
-    onChangePw,
-    onShowPw,
+    onChangeRating,
+    onChangeTitle,
+    onChangeDate,
+    onChangeDescription,
     errors,
-    user,
-    pwVisibility
+    review,
 }) => {
     return (
         <div>
-            <form onSubmit={onSubmit} className="formLogin">
+            <form onSubmit={onSubmit} className="formReview">
                 <h1>Add Review</h1>
                 <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
-                {/* <div className="component usernameDiv">
-                    <TextField
-                        variant="standard"
-                        fullWidth={true}
-                        className="input"
-                        name="username"
-                        label="Username"
-                        value={user.username}
-                        onChange={onChangeUsername}
-                        // error is whether it is in error state
-                        error={errors.username ? true : false}
-                        // helperText is the text shown on error
-                        helperText={errors.username}
-                    />
-                </div> */}
-                <div className="component emailDiv">
+                <div className="component ratingDiv">
                     <TextField 
                         variant="standard"
                         fullWidth={true}
                         className="input"
-                        name="email"
-                        label="Email"
-                        value={user.email}
-                        onChange={onChangeEmail}
-                        error={errors.email ? true : false}
-                        helperText={errors.email}
+                        name="rating"
+                        label="Rating"
+                        value={review.rating}
+                        onChange={onChangeRating}
+                        error={errors.rating ? true : false}
+                        helperText={errors.rating}
                     />
                 </div>
-                <div className="component passwordDiv">
-                    <TextField
+                <div className="component titleDiv">
+                    <TextField 
                         variant="standard"
                         fullWidth={true}
-                        // "password" will have astricks, "input" will not
-                        type={pwVisibility ? "input" : "password"}
-                        // className="input password"
-                        name="password"
-                        label="Password"
-                        value={user.password}
-                        onChange={onChangePw}
-                        error={errors.password ? true : false}
-                        helperText={errors.password}
-                        // Adds an icon at the end of the TextField to toggle visibility
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={onShowPw}
-                                    >
-                                        {pwVisibility ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }}
+                        className="input"
+                        name="title"
+                        label="Title"
+                        value={review.title}
+                        onChange={onChangeTitle}
+                        error={errors.title ? true : false}
+                        helperText={errors.title}
+                    />
+                </div>
+                <div className="component dateDiv">
+                    <TextField 
+                        variant="standard"
+                        fullWidth={true}
+                        className="input"
+                        name="date"
+                        label="Date"
+                        value={review.date}
+                        onChange={onChangeDate}
+                        error={errors.date ? true : false}
+                        helperText={errors.date}
+                    />
+                </div>
+                <div className="component descriptionDiv">
+                    <TextField 
+                        variant="standard"
+                        fullWidth={true}
+                        className="input"
+                        name="description"
+                        label="Description"
+                        value={review.description}
+                        onChange={onChangeDescription}
+                        error={errors.description ? true : false}
+                        helperText={errors.description}
                     />
                 </div>
                 <div className="component submitDiv">
