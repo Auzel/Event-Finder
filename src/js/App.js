@@ -6,6 +6,7 @@ import AccountInformation from './AccountInformation';
 import AccountHistory from './AccountHistory';
 import EditAccount from './EditAccount';
 import AddReviewPage from './AddReviewPage';
+import EditReviewPage from './EditReviewPage';
 import Map from './Map';
 import {Routes, Route} from 'react-router-dom';
 import { globalTheme } from '../globalTheme.js'
@@ -26,6 +27,7 @@ function App() {
             <Route path = '/EditAccount' element = {<EditAccount/>}/>
             <Route path = '/Map' element ={<Map/>}/>
             <Route path = '/AddReviewPage' element ={<AddReviewPage/>}/>
+            <Route path = '/EditReviewPage' element ={<EditReviewPage/>}/>
           </Routes>
         </ThemeProvider>
       </CssBaseline>
