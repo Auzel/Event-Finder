@@ -1,6 +1,8 @@
 var secrets = require('../config/secrets');
 var {check} = require('express-validator');
 
+
+
 module.exports = function (router) {
     var userController = require('../controllers/userController');
     var signupRoute = router.route('/signup');
