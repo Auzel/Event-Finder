@@ -59,7 +59,7 @@ const getUser = async function(req, res) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
             req.body._id = decoded._id;
-        })
+        });
 
         let user = await User.findById(req.body._id).exec();
         if (!user) {
@@ -80,7 +80,7 @@ const replaceUser = async function(req, res) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
             req.body._id = decoded._id;
-        })
+        });
 
         let new_user = new User(req.body);
         let user = await User.findByIdAndUpdate(new_user._id, new_user).exec();
@@ -95,8 +95,22 @@ const replaceUser = async function(req, res) {
     }
 }
 
+const checkSignin = function(req, res) {
+    try {
+        jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+            if (err) {
+                return res.status(401).json(message.response("Unauthorized", {}));
+            }
+            return res.status(200).json(message.response("OK", {}));
+        });
+    } catch (err) {
+        return res.status(500).json(message.response("Check Signin Failed", {}));
+    }
+}
+
 exports.createUser = createUser;
 exports.getUser = getUser;
 exports.replaceUser = replaceUser;
 exports.signin = signin;
 exports.signout = signout;
+exports.checkSignin = checkSignin;
