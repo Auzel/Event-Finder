@@ -17,6 +17,7 @@ module.exports = function (router) {
         check("password", "Password must be at least 6 characters").isLength({min: 6})
     ], userController.createUser);
     signinRoute.post(userController.signin);
+    signinRoute.get(userController.checkSignin);
     signoutRoute.get(userController.signout);
     userRoute.get(userController.getUser);
     userRoute.put(userController.replaceUser);
