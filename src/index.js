@@ -14,12 +14,14 @@ const root = ReactDOM.createRoot(
 
 root.render(
   // ThemeProvider required theme to be specified 
-  <React.StrictMode>
+  // <React.StrictMode>
+  <div>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Heebo"></link>
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </div>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

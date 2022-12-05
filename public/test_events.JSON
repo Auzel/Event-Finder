@@ -1,103 +1,103 @@
 {
+    "venues": [
+        {
+            "id": 54561366,
+            "name": "Staple's Center",
+            "location": [40.109831, -88.230371],
+            "event_ids": [52549859, 38144578, 37443701],
+            "review_ids": [84795708, 14119201, 83081087],
+            "rating_avg": 3.466
+        },
+        {
+            "id": 22974910, 
+            "name": "The Gorge Amphitheatre",
+            "location": [40.110862, -88.232873],
+            "event_ids": [81587470, 49732473, 71436899],
+            "review_ids": [21421746, 63265865, 30069077],
+            "rating_avg": 4.750
+        },
+        {
+            "id": 70719439,
+            "name": "NODUS",
+            "location": [40.114262, -88.266634],
+            "event_ids": [74541270, 50595570, 72248250],
+            "review_ids": [79672765, 64957018, 83019112],
+            "rating_avg": 4.000
+        }
+    ],
     "events": [
         {
             "id": 52549859,
             "title": "Taylor Swift's Tour",
-            "location": [40.109831, -88.230371],
-            "venue": "Staple's Center",
+            "venue_id": 54561366,
             "date": "12/6/2022",
-            "rating": 4.5,
             "image": "picsum.photos/100/100",
-            "description": "He sat across from her trying to imagine it was the first time. It wasn't. Had it been a hundred? It quite possibly could have been. Two hundred? Probably not. His mind wandered until he caught himself and again tried to imagine it was the first time.",
-            "review_ids": [89555833, 71251107]
+            "description": "He sat across from her trying to imagine it was the first time. It wasn't. Had it been a hundred? It quite possibly could have been. Two hundred? Probably not. His mind wandered until he caught himself and again tried to imagine it was the first time."
         },
         {
             "id": 38144578,
             "title": "The Weeknd Concert",
-            "location": [40.109831, -88.230371],
-            "venue": "Staple's Center",
+            "venue_id": 54561366,
             "date": "12/13/2022",
-            "rating": 3.5,
             "image": "picsum.photos/100/100",
-            "description": "There was something special about this little creature. Donna couldn't quite pinpoint what it was, but she knew with all her heart that it was true. It wasn't a matter of if she was going to try and save it, but a matter of how she was going to save it. She went back to the car to get a blanket and when she returned the creature was gone.",
-            "review_ids": [33376085, 17191978]
+            "description": "There was something special about this little creature. Donna couldn't quite pinpoint what it was, but she knew with all her heart that it was true. It wasn't a matter of if she was going to try and save it, but a matter of how she was going to save it. She went back to the car to get a blanket and when she returned the creature was gone."
         },
         {
             "id": 37443701,
             "title": "Anne-Marie",
-            "location": [40.110862, -88.232873],
-            "venue": "Staple's Center",
+            "venue_id": 54561366,
             "date": "12/17/2022",
             "rating": 1.5,
             "image": "picsum.photos/100/100",
-            "description": "What was beyond the bend in the stream was unknown. Both were curious, but only one was brave enough to want to explore. That was the problem. There was always one that let fear rule her life.",
-            "review_ids": [17191978, 87366550, 73621683] 
+            "description": "What was beyond the bend in the stream was unknown. Both were curious, but only one was brave enough to want to explore. That was the problem. There was always one that let fear rule her life."
         },
         {
             "id": 81587470,
             "title": "Ariana Grande",
-            "location": [40.114537, -88.220092],
-            "venue": "The Gorge Amphitheatre",
+            "venue_id": 22974910,
             "date": "12/18/2022",
-            "rating": 4.2,
             "image": "picsum.photos/100/100",
-            "description": "He ordered his regular breakfast. Two eggs sunnyside up, hash browns, and two strips of bacon. He continued to look at the menu wondering if this would be the day he added something new. This was also part of the routine. A few seconds of hesitation to see if something else would be added to the order before demuring and saying that would be all. It was the same exact meal that he had ordered every day for the past two years.",
-            "review_ids": [20250206]
+            "description": "He ordered his regular breakfast. Two eggs sunnyside up, hash browns, and two strips of bacon. He continued to look at the menu wondering if this would be the day he added something new. This was also part of the routine. A few seconds of hesitation to see if something else would be added to the order before demuring and saying that would be all. It was the same exact meal that he had ordered every day for the past two years."
         },
         {
             "id": 49732473,
             "title": "Harry Styles",
-            "location": [40.114262, -88.266634],
-            "venue": "KOKO",
+            "venue_id": 22974910,
             "date": "12/24/2022",
-            "rating": 4.0,
             "image": "picsum.photos/100/100",
-            "description": "It wasn't supposed to end that way. The plan had been meticulously thought out and practiced again and again. There was only one possible result once it had been implemented, but as they stood there the result wasn't anything close to what it should have been. They all blankly looked at each wondering how this could have happened. In their minds, they all began to blame the other members of the group as to why they had failed.",
-            "review_ids": [98070143]
+            "description": "It wasn't supposed to end that way. The plan had been meticulously thought out and practiced again and again. There was only one possible result once it had been implemented, but as they stood there the result wasn't anything close to what it should have been. They all blankly looked at each wondering how this could have happened. In their minds, they all began to blame the other members of the group as to why they had failed."
         },
         {
             "id": 71436899,
             "title": "Rihanna",
-            "location": [40.113737, -88.265605],
-            "venue": "The Rave",
+            "venue_id": 22974910,
             "date": "12/25/2022",
-            "rating": 2.7,
             "image": "picsum.photos/100/100",
-            "description": "He was aware there were numerous wonders of this world including the unexplained creations of humankind that showed the wonder of our ingenuity. There are huge heads on Easter Island. There are the Egyptian pyramids. There’s Stonehenge. But he now stood in front of a newly discovered monument that simply didn't make any sense and he wondered how he was ever going to be able to explain it.",
-            "review_ids": [59093516]
+            "description": "He was aware there were numerous wonders of this world including the unexplained creations of humankind that showed the wonder of our ingenuity. There are huge heads on Easter Island. There are the Egyptian pyramids. There’s Stonehenge. But he now stood in front of a newly discovered monument that simply didn't make any sense and he wondered how he was ever going to be able to explain it."
         },
         {
             "id": 74541270,
             "title": "Stormzy",
-            "location": [40.460323, -88.994626],
-            "venue": "Bataclan",
+            "venue_id": 22974910,
             "date": "12/26/2022",
-            "rating": 1.2,
             "image": "picsum.photos/100/100",
-            "description": "It was a simple tip of the hat. Grace didn't think that anyone else besides her had even noticed it. It wasn't anything that the average person would notice, let alone remember at the end of the day. That's why it seemed so unbelievable that this little gesture would ultimately change the course of the world.",
-            "review_ids": [34522731]
+            "description": "It was a simple tip of the hat. Grace didn't think that anyone else besides her had even noticed it. It wasn't anything that the average person would notice, let alone remember at the end of the day. That's why it seemed so unbelievable that this little gesture would ultimately change the course of the world."
         },
         {
             "id": 50595570,
             "title": "Miley Cyrus",
-            "location": [40.462419, -88.932319],
-            "venue": "El Rey Theatre",
+            "venue_id": 22974910,
             "date": "12/28/2022",
-            "rating": 4.2,
             "image": "picsum.photos/100/100",
-            "description": "The trees, therefore, must be such old and primitive techniques that they thought nothing of them, deeming them so inconsequential that even savages like us would know of them and not be suspicious. At that, they probably didn't have too much time after they detected us orbiting and intending to land. And if that were true, there could be only one place where their civilization was hidden.",
-            "review_ids": [31668664]
+            "description": "The trees, therefore, must be such old and primitive techniques that they thought nothing of them, deeming them so inconsequential that even savages like us would know of them and not be suspicious. At that, they probably didn't have too much time after they detected us orbiting and intending to land. And if that were true, there could be only one place where their civilization was hidden."
         },
         {
             "id": 72248250,
             "title": "Dua Lipa",
-            "location": [40.464378, -88.921468],
-            "venue": "NODUS",
+            "venue_id": 70719439,
             "date": "12/29/2022",
-            "rating": 1.1,
             "image": "picsum.photos/100/100",
-            "description": "The boxed moved. That was a problem. Peter had packed the box three hours before and there was nothing inside that should make it move. The question now was whether or not Peter was going to open it up and look inside to see why it had moved. The answer to that question was obvious. Peter dropped the package into the mailbox so he would never have to see it again.",
-            "review_ids": [96384184]
+            "description": "The boxed moved. That was a problem. Peter had packed the box three hours before and there was nothing inside that should make it move. The question now was whether or not Peter was going to open it up and look inside to see why it had moved. The answer to that question was obvious. Peter dropped the package into the mailbox so he would never have to see it again."
         }
     ]
 }
