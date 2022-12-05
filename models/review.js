@@ -3,7 +3,6 @@ var mongoose = require('mongoose');
 
 // Define our review schema
 var ReviewSchema = new mongoose.Schema({
-    name: {type: String, required: true},
     user_id: {type: String, requred: true},
     venue_id: {type: String, required: true},
     rating: {type: int, required: true},
