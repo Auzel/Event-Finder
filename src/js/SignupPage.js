@@ -2,6 +2,7 @@
 import React from 'react';
 import SignupForm from './SignupForm';
 import NavBar from "./NavBar.js"
+import axios from 'axios';
 
 const validator = require("validator");
 
@@ -45,6 +46,9 @@ class SignupPage extends React.Component
       // Value for whether the password should be astricts
       showPw: false
     }
+    // this.axios=null;
+
+    this.axios = axios.create({baseURL: 'https://localhost:4000/api', timeout: 3000});
 
     // bind the handlers to 'this'.
     this.handleChangeFullName = this.handleChangeFullName.bind(this);
@@ -198,7 +202,35 @@ class SignupPage extends React.Component
    * that will be submitted to the database.
    */
   submitSignupForm(user) {
-    console.log("submitting...");
+    // user: {
+    //   username: "",
+    //   email: "",
+    //   password: "",
+    //   // The second password entered to ensure spelling correctness.
+    //   confirmpw: "",
+    //   fullname: ""
+    // },
+
+    // axios.post(this.galleryUrl).then ((respondToGalleryUrl) => { this.setState ({characters: respondToGalleryUrl.data.data, characterGallery: {} }); }).catch(() => {});
+    this.axios.post('/signup', {
+      name: this.state.user.fullname,
+      email: this.state.user.email,
+      username: this.state.user.username,
+      password: this.state.user.password,
+      eventPrefs: []
+    }).then(
+      (respondToGalleryUrl) => {
+        console.log(respondToGalleryUrl);
+      }
+        // this.setState({
+        //   characters: respondToGalleryUrl.data.data, characterGallery: {} }); 
+        // }
+      ).catch((error) => {
+        console.log("ERROR!", error);
+      });
+
+
+    // console.log("submitting...");
   }
  
   /**

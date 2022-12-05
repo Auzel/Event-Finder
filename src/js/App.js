@@ -7,7 +7,7 @@ import AccountHistory from './AccountHistory';
 import EditAccountPage from './EditAccountPage';
 import AddReviewPage from './AddReviewPage';
 import EditReviewPage from './EditReviewPage';
-import Map from './Map';
+import MapPage from './MapPage';
 import {Routes, Route} from 'react-router-dom';
 import { globalTheme } from '../globalTheme.js'
 import { ThemeProvider } from '@emotion/react';
@@ -25,7 +25,7 @@ function App() {
             <Route path = '/AccountInformation' element = {<AccountInformation/>}/>
             <Route path = '/AccountHistory' element ={<AccountHistory/>}/>
             <Route path = '/EditAccountPage' element = {<EditAccountPage/>}/>
-            <Route path = '/Map' element ={<Map/>}/>
+            <Route path = '/Map' element ={<MapPage/>}/>
             <Route path = '/AddReviewPage' element ={<AddReviewPage/>}/>
             <Route path = '/EditReviewPage' element ={<EditReviewPage/>}/>
           </Routes>

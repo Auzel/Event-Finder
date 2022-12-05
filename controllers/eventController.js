@@ -2,7 +2,7 @@
 var secrets = require('../config/secrets');
 var mongoose = require('mongoose');
 
-var queryController = require('./queryController');
+// var queryController = require('./queryController');
 var message = require('../models/message');
 
 

@@ -6,6 +6,7 @@ const jsonwebtoken = require('jsonwebtoken');
 
 const createUser = function(req, res) {
     const errors = validationResult(req);
+    console.log("GOT REQUEST", req);
     if (!errors.isEmpty()) {
         return res.status(400).json(message.response(errors.array()[0].msg, {}));
     }

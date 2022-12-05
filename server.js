@@ -6,6 +6,8 @@ var express = require('express'),
     cookieParser = require("cookie-parser"),
     secrets = require('./config/secrets'),
     cors = require("cors");
+    https = require('https');
+    fs = request("fs");
 
 // Create our Express application
 var app = express();
@@ -37,6 +39,6 @@ app.use(cors());
 require("./routes")(app, router);
 
 // Start the server
-app.listen(port);
+https.createServer(app).listen(port);
 console.log('Server running on port ' + port);
 
