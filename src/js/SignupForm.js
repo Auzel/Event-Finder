@@ -14,6 +14,7 @@ import SubmitButton from "./SubmitButton";
  */
 const SignupForm = ({
     onSubmit,
+    onChangeFullName,
     onChangeUsername,
     onChangeEmail,
     onChangePw,
@@ -30,6 +31,21 @@ const SignupForm = ({
             <form onSubmit={onSubmit} className="formSignup">
                 <h1>SIGN UP</h1>
                 <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
+                <div className="component fullNameDiv">
+                    <TextField
+                        variant="standard"
+                        fullWidth={true}
+                        className="input"
+                        name="fullname"
+                        label="Full Name"
+                        value={user.fullname}
+                        onChange={onChangeFullName}
+                        // error is whether it is in error state
+                        error={errors.fullname ? true : false}
+                        // helperText is the text shown on error
+                        helperText={errors.fullname}
+                    />
+                </div>
                 <div className="component usernameDiv">
                     <TextField
                         variant="standard"

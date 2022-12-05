@@ -8,6 +8,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { Link } from 'react-router-dom';
+
 /**
  * SignupForm is not a component, but a function
  * that returns the react layout after assigning
@@ -116,6 +118,8 @@ const AddReviewForm = ({
                 </div>
                 <div className="component submitDiv">
                     <SubmitButton variant="small" text="SUBMIT" />
+                    
+                    <Link to = "/Map" className="cancelLink"> <button className="cancelButton"> CANCEL</button> </Link>
                 </div>
             </form>
         </div>

@@ -39,13 +39,15 @@ class SignupPage extends React.Component
         email: "",
         password: "",
         // The second password entered to ensure spelling correctness.
-        confirmpw: ""
+        confirmpw: "",
+        fullname: ""
       },
       // Value for whether the password should be astricts
       showPw: false
     }
 
     // bind the handlers to 'this'.
+    this.handleChangeFullName = this.handleChangeFullName.bind(this);
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handlePwChange = this.handlePwChange.bind(this);
@@ -63,6 +65,18 @@ class SignupPage extends React.Component
    * 
    * @param {*} event the calling TextField
    */
+   handleChangeFullName(event) {
+    // get the calling TextField
+    const field = event.target.name;
+    const user = this.state.user;
+    user[field] = event.target.value;
+
+
+    this.setState({
+      user
+    });
+  }
+  
   handleChangeUsername(event) {
     // get the calling TextField
     const field = event.target.name;
@@ -218,7 +232,8 @@ class SignupPage extends React.Component
       var user = {
         usr: this.state.user.username,
         pw: this.state.user.password,
-        email: this.state.user.email
+        email: this.state.user.email,
+        fullname: this.state.user.fullname
       }
       this.submitSignupForm(user);
     }
@@ -242,6 +257,7 @@ class SignupPage extends React.Component
           // Pass the state values and handler functions as parameters
           // to assign to each component.
           onSubmit={this.validateSignupForm}
+          onChangeFullName={this.handleChangeFullName}
           onChangeUsername={this.handleChangeUsername}
           onChangeEmail={this.handleChangeEmail}
           onChangePw={this.handlePwChange}

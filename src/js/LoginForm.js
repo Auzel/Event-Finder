@@ -3,6 +3,7 @@ import { TextField, InputAdornment, IconButton, FormHelperText } from "@mui/mate
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import '../scss/LoginPage.scss'
 import SubmitButton from "./SubmitButton";
+import { Link } from 'react-router-dom';
 /**
  * SignupForm is not a component, but a function
  * that returns the react layout after assigning
@@ -83,7 +84,7 @@ const LoginForm = ({
                 </div>
                 <div className="component submitDiv">
                     <SubmitButton variant="small" text="SUBMIT" />
-                    {/* <Button type="submit" className="buttonSubmit">Submit</Button> */}
+                    <Link to = "/SignupPage" className="supLink"> <button className="supButton"> SIGN UP </button> </Link>
                 </div>
             </form>
         </div>

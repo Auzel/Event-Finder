@@ -70,6 +70,12 @@ body
     // margin-right: 10%;
 }
 
+.LoginPageLink:hover
+{
+    background-color: #AEE5D1;
+}
+
+
 .SignupPageLink
 {
     background-color: #415380;
@@ -77,6 +83,11 @@ body
     font-size: 4vw;
     font-weight: bold;
     text-decoration: none;
+}
+
+.SignupPageLink:hover
+{
+    background-color: #AEE5D1;
 }
 
 .styleDivOne
