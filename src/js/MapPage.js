@@ -15,7 +15,7 @@ import { TurnRight } from '@mui/icons-material';
  */
 
 const containerStyle = {
-  width: "90vw",//window.innerWidth,
+  width: "100vw",//window.innerWidth,
   height: "100vh"//window.innerHeight - 48
 };
 
@@ -40,12 +40,13 @@ export default class MapPage extends React.Component {
         "review_ids": [],
         "rating_avg": null
       },
-      selectedVenueEvents: []
+      selectedVenueEvents: [],
+      selectedEvent: {}
     }
 
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.venueFilter = this.venueFilter.bind(this);
-    this.detailedInformationDidMount = this.detailedInformationDidMount.bind(this);
+    this.listItemOnClick = this.listItemOnClick.bind(this);
 
     // useEffect(() => {
     //   const listener = e => {
@@ -183,31 +184,16 @@ export default class MapPage extends React.Component {
     }, () => {return this.updateSelectedMarkerVenueInfo()})
   }
 
-  // Helper function to convert vh units to px units.
-  vh_to_px(vh) {
-    return document.documentElement.clientHeight * vh / 100;
-  }
-
   listItemOnClick(id) {
-    console.log("CLICKED:",id);
-  }
-
-  scrollToElem(scroll_elem_id) {
-    const element = document.getElementById(scroll_elem_id);
-    // Gets the section pixel scroll location in reference to page start.
-    const y = element.getBoundingClientRect().top + window.pageYOffset;// + yOffset;
-    // Start animation to desired location
-    window.scrollTo({top: y, behavior: 'smooth'});
-  }
-
-  detailedInformationDidMount() {
-    console.log("did mount");
-    this.scrollToElem("detailInfoDiv");
+    this.setState({
+      selectedEvent: this.state.selectedVenueEvents.find((element) => {
+        return element.id === id;
+      })
+    });
   }
 
   render() {
-    console.log(this.selectedMarker);
-    // console.log((() => {return this.selectedMarker ? "yes":"no"})());
+    console.log(this.state.selectedMarker);
     return (
       <div>
         <LoadScript googleMapsApiKey="AIzaSyBwrwXQZRX_inRPmoN4xzOJDZ3tHrcY7Mc">
@@ -217,12 +203,12 @@ export default class MapPage extends React.Component {
             zoom={10}
             options={{streetViewControl: false}}
             // defaultOptions={{styles: mapStyles}}
-          >
+            >
             {
               // Cycle through "events" in the state variable, creatinga  marker and info window
               // for each event. The infowindow is only visibile if state.selectedEvent is the id
               // of the marker.
-              this.state.venues ? this.state.venues?.map(
+              this.state.venues ? this.state.venues.map(
                 (marker) => {
                   try {
                     return (
@@ -258,9 +244,8 @@ export default class MapPage extends React.Component {
                                   } 
                                   </List>                               
                               </div>
-
                             </InfoWindowF>                   
-                          ) : null 
+                          ) : null
                         }
                         </MarkerF>
                       </div>)
@@ -271,11 +256,13 @@ export default class MapPage extends React.Component {
                 }
               ) : <></>
             }
-            { 
-            }
           </GoogleMap>
         </LoadScript>
-        {this.state.selectedMarker ? <div id='detailInfoDiv'><DetailedInformationPage mountCallBack={this.detailedInformationDidMount} /></div> : <></>}
+        {this.state.selectedMarker ? <div id='detailInfoDiv'>
+          <DetailedInformationPage
+            event={this.state.selectedEvent}
+            /></div> : <></>
+        }
       </div>
     );
   }
