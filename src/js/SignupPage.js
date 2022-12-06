@@ -48,7 +48,7 @@ class SignupPage extends React.Component
     }
     // this.axios=null;
 
-    this.axios = axios.create({baseURL: 'https://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
 
     // bind the handlers to 'this'.
     this.handleChangeFullName = this.handleChangeFullName.bind(this);

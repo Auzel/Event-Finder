@@ -38,6 +38,7 @@ app.use(cors());
 // Use routes as a module (see index.js)
 require("./routes")(app, router);
 
+
 // Start the server
 app.listen(port);
 console.log('Server running on port ' + port);

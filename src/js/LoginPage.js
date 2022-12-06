@@ -2,6 +2,7 @@
 import React from 'react';
 import LoginForm from './LoginForm';
 import NavBar from "./NavBar.js"
+import axios from 'axios';
 
 const validator = require("validator");
 
@@ -41,6 +42,8 @@ export default class LoginPage extends React.Component
       // Value for whether the password should be astricts
       showPw: false
     }
+
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
 
     // bind the handlers to 'this'.
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -157,7 +160,23 @@ export default class LoginPage extends React.Component
    * that will be submitted to the database.
    */
   submitLoginForm(user) {
-    console.log("submitting...");
+    // console.log("submitting...");
+    this.axios.post('/signin', {
+      // name: this.state.user.fullname,
+      email: this.state.user.email,
+      // username: this.state.user.username,
+      password: this.state.user.password,
+      // eventPrefs: []
+    }).then(
+      (respondToGalleryUrl) => {
+        console.log(respondToGalleryUrl);
+      }
+        // this.setState({
+        //   characters: respondToGalleryUrl.data.data, characterGallery: {} }); 
+        // }
+      ).catch((error) => {
+        console.log("ERROR!", error);
+      });
   }
  
   /**
