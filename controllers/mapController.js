@@ -21,45 +21,30 @@ const getItems = async function(req, res, slug){
             venues=[res2.data];
         }
         for (var venue of venues){
-            var myvenue={};
-
-            myvenue['name']=venue.name
-            myvenue['location']=venue.location
-            myvenue['id']=venue.id
-            myvenue['event_ids']=await getVenueEvents(venue.id)
-            output.push(myvenue)
-            await rate_limit_helper()
-            //reviews id list
-            //myvenue['rating']= get from database
+            var map_item={};
+            map_item['location']=venue.location
+            if (venue.upcomingEvents._total==1){
+                map_item['type']='event'
+                var events=await getVenueEvents(venue.id)
+                map_item['id']=events[0].id
+                map_item['name']=events[0].name
+                await rate_limit_helper()
+                output.push(map_item)
+            } 
+            else if (venue.upcomingEvents._total>=1){
+                map_item['type']='venue'
+                map_item['id']=venue.id
+                map_item['name']=venue.name
+                output.push(map_item)
+            }
             
         }
         res.status(200).send(message.response("Ok", output));
-        
 
     }
 
 
-
 }
-
-const getVenueList = function(req, res) {
-    const slug='venues.json'
-    getItems(req,res,slug)
-}
-
-
-
-const getVenue = function(req, res) {
-    const id = req.params.id
-    const slug='venues/'.concat(id).concat('.json')
-    getItems(req,res,slug)
-}
-
-const rate_limit_helper = () =>
-  new Promise(resolve =>
-    setTimeout(() => resolve(), 60)
-  );
-
 
 const getVenueEvents = async function(venu_id) {
     var params={}
@@ -70,23 +55,30 @@ const getVenueEvents = async function(venu_id) {
 
     const res = await api.get(slug,{ params })
   
-    var event_ids=[]
+    var myevents=[]
     if (res.data){
         var events=res.data._embedded.events
         for (var event of events){
-            event_ids.push(event.id)
+            myevents.push({"id":event.id,"name":event.name})
         }
     }
-    return event_ids;
+    return myevents;
+}
+
+
+
+const rate_limit_helper = () =>
+  new Promise(resolve =>
+    setTimeout(() => resolve(), 80)
+  );
+
+const getMap = function(req, res) {
+    const slug='venues.json'
+    getItems(req,res,slug)
 }
 
 
 
 
 
-
-exports.getVenueList = getVenueList;
-exports.getVenue = getVenue;
-exports.getVenueEvents = getVenueEvents
-
-
+exports.getMap = getMap;
