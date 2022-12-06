@@ -3,7 +3,7 @@ var secrets = require('../config/secrets');
 var eventController = require('../controllers/eventController');
 
 module.exports = function (router) {
-    var eventRoute = router.route('/event');
+    var eventRoute = router.route('/events');
     var specifiedEventRoute = router.route('/events/:id')
 
     eventRoute.get((req, res) => eventController.getEventList(req, res));
