@@ -3,6 +3,10 @@ import React from 'react';
 import LoginForm from './LoginForm';
 import NavBar from "./NavBar.js"
 import axios from 'axios';
+import { GlobalContext } from './GlobalContext';
+// import { Global } from '@emotion/react';
+import { setUserId } from './userId';
+import { setToken } from './token';
 
 const validator = require("validator");
 
@@ -25,6 +29,8 @@ const validator = require("validator");
 // Here we are creating a react class called App.
 export default class LoginPage extends React.Component  
 {
+  static contextType = GlobalContext;
+
   constructor(props) {
     super(props);
 
@@ -161,22 +167,35 @@ export default class LoginPage extends React.Component
    */
   submitLoginForm(user) {
     // console.log("submitting...");
+    // this.axios.defaults.withCredentials = true;
     this.axios.post('/signin', {
-      // name: this.state.user.fullname,
+      // withCredentials: "include",
       email: this.state.user.email,
-      // username: this.state.user.username,
       password: this.state.user.password,
       // eventPrefs: []
     }).then(
-      (respondToGalleryUrl) => {
-        console.log(respondToGalleryUrl);
+      (response) => {
+        console.log(response);
+        let res_id = response.data.data._id;
+        let res_token = response.data.data.token;
+        console.log(response.token);
+
+        // Update storage with user id and token
+        setUserId(res_id);
+        setToken(res_token);
+
+        // Go to the map page
+        window.location = "http://localhost:3000/Map";
       }
-        // this.setState({
-        //   characters: respondToGalleryUrl.data.data, characterGallery: {} }); 
-        // }
       ).catch((error) => {
         console.log("ERROR!", error);
-      });
+        this.setState({
+          errors: {
+            message: "Unable to Login with Given Information"
+          }
+        });
+      }
+    );
   }
  
   /**
@@ -189,6 +208,7 @@ export default class LoginPage extends React.Component
    */
   validateLoginForm(event) {
     event.preventDefault();
+    
     let errors = this.state.errors;
     errors.message = "";
     

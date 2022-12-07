@@ -3,30 +3,29 @@ import React from 'react';
 import AddReviewForm from './AddReviewForm';
 import NavBar from "./NavBar.js"
 import dayjs from 'dayjs';
+import { getUserId } from './userId';
+import PropTypes from "prop-types";
+import { ContactPageOutlined } from '@mui/icons-material';
+import axios from 'axios';
+import { getToken } from './token';
 
 const validator = require("validator");
 
-// import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-// import { Link } from 'react-router-dom';
-// import './Styles.scss';
-// import List from './List';
-// import axios from 'axios';
-
-/**
- * ********************************************
- * 
- * Implement:
- * 
- * https://codesandbox.io/s/2oow9n5p7r?file=/src/SignUpContainer.js
- * 
- * ********************************************
- */
-
-// Here we are creating a react class called App.
 export default class AddReviewPage extends React.Component  
 {
   constructor(props) {
     super(props);
+    console.log("PROPS:", props);
+
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios.defaults.headers.common['Authorization'] =    
+         'Bearer ' + getToken();
+
+
+    const queryParameters = new URLSearchParams(window.location.search)
+    const venue_info = JSON.parse(queryParameters.get("venue_info"));
+
+    console.log("VENUE INFO", venue_info);
 
     // State contains any mutable value in the form
     this.state = {
@@ -34,6 +33,8 @@ export default class AddReviewPage extends React.Component
       // Specify component by setting the key to that component
       // name and the value to the error message to display.
       errors: {},
+      venue: venue_info,
+      // venue_id: {},
       // Contains the key/value pairs for inputed values.
       review: {
         rating: "",
@@ -50,6 +51,10 @@ export default class AddReviewPage extends React.Component
     this.handleChangeDescription = this.handleChangeDescription.bind(this);
     this.submitReviewForm = this.submitReviewForm.bind(this);
     this.validateReviewForm = this.validateReviewForm.bind(this);
+  }
+
+  componentDidMount() {
+    
   }
 
   // Write the handlers and functionality for everything.
@@ -80,21 +85,6 @@ export default class AddReviewPage extends React.Component
     this.setState({
       review
     });
-
-    // // Validate the email
-    // let errors = this.state.errors;
-    // if (
-    //   event.target.value &&
-    //   !validator.isEmail(event.target.value)
-    // ) {
-    //   errors['email'] = "Please provide a correct email address.";
-    // } else {
-    //   errors['email'] = "";
-    // }
-
-    // this.setState({
-    //   errors: errors
-    // })
   }
 
   /**
@@ -108,39 +98,11 @@ export default class AddReviewPage extends React.Component
     // console.log(event);
     let review = this.state.review;
     review.date = newDate;
+    // console.log("NEW DATE:", newDate.format("MM-DD-YY"));
+    // console.log()
     this.setState({
       review: review
     })
-
-    // const field = event.target.name;
-    // const review = this.state.review;
-    // review[field] = event.target.value;
-
-    // this.setState({
-    //   review
-    // });
-
-    // // Validate the password and update the state for radio icons accordingly
-    // let isempty = event.target.value ? false : true;
-    // let hasSpecialChar = this.containsSpecialChars(event.target.value);
-    // let hasCorrectLen = (event.target.value && event.target.value.length >= 8) ? true : false;
-
-    // let errors = this.state.errors;
-    // if (isempty) {
-    //   errors.password = "";
-    // } else if (!hasSpecialChar && !hasCorrectLen) {
-    //   errors.password = "Password must be greater than 8 characters and contain one special character.";
-    // } else if (!hasSpecialChar) {
-    //   errors.password = "Password must contain one special character.";
-    // } else if (!hasCorrectLen) {
-    //   errors.password = "Password must be greater than 8 characters.";
-    // } else {
-    //   errors.password = ""
-    // }
-
-    // this.setState({
-    //   errors: errors
-    // })
   }
 
   /**
@@ -167,7 +129,24 @@ export default class AddReviewPage extends React.Component
    * that will be submitted to the database.
    */
   submitReviewForm(review) {
-    console.log("submitting...");
+    // console.log("submitting...", review);
+    this.axios.post('/reviews', {
+      token: JSON.stringify(getToken()),
+      user_id: JSON.stringify(getUserId()),
+      venue_id: JSON.stringify(this.state.venue.id),
+      rating: JSON.stringify(this.state.review.rating),
+      long_comment: JSON.stringify(this.state.review.description),
+      eventAttendedName: JSON.stringify(this.state.review.title),
+      eventAttendedDate: JSON.stringify(this.state.review.date.format("MM-DD-YY"))
+    }).then(
+      (response) => {
+        console.log("RESPONSE", response);
+        // let user = JSON.parse(response).data.data.user;
+        // window.location("https://localhost:3000/accountinformation?" + JSON.stringify(user));
+      }
+    ).catch((error) => {
+      console.log("ERROR!", error);
+    });
   }
  
   /**
@@ -231,4 +210,8 @@ export default class AddReviewPage extends React.Component
       </div>
     );
   }
+}
+
+AddReviewPage.propTypes = {
+  // venue_info: PropTypes.object.isRequired
 }

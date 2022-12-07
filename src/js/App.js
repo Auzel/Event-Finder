@@ -12,10 +12,14 @@ import {Routes, Route} from 'react-router-dom';
 import { globalTheme } from '../globalTheme.js'
 import { ThemeProvider } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
+import { GlobalContext } from './GlobalContext';
+import { Unstable_Grid } from '@mui/system';
+import { useRadioGroup } from '@mui/material';
 
 function App() {
+  const [userId, setUserId] = React.useState(Number);
   return (
-    <>
+    <GlobalContext.Provider value={{userId, setUserId}}>
       <CssBaseline>
         <ThemeProvider theme={globalTheme}>
           <Routes>
@@ -31,7 +35,7 @@ function App() {
           </Routes>
         </ThemeProvider>
       </CssBaseline>
-    </>
+    </GlobalContext.Provider>
   )
 }
 

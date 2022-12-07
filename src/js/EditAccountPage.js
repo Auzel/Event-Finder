@@ -3,6 +3,9 @@ import React from 'react';
 import EditAccountForm from './EditAccountForm';
 import NavBar from "./NavBar.js"
 import '../scss/AccountHistory.scss'
+import axios from 'axios';
+import { getToken } from './token';
+import { getUserId } from './userId.js'
 
 const validator = require("validator");
 
@@ -28,6 +31,34 @@ class EditAccountPage extends React.Component
   constructor(props) {
     super(props);
 
+    // Get the user information from url query props
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios.defaults.headers.common['Authorization'] =    
+         'Bearer ' + getToken();
+
+    const queryParameters = new URLSearchParams(window.location.search)
+    const user = JSON.parse(queryParameters.get("user"));
+    console.log(user);
+    this.providedUser = user;
+
+    // name: this.state.user.fullname,
+    // email: this.state.user.email,
+    // username: this.state.user.username,
+    // password: this.state.user.password,
+    // eventPrefs: []
+    const def_user = {
+      _id: getUserId(),
+      username: "",
+      email: user.email,
+      fullname: "",
+      eventPrefs: user.eventPrefs
+    }
+    if (user) {
+      def_user.username = user.username;
+      def_user.fullname = user.name;
+    }
+    // console.log("DEF USER", def_user);
+
     // State contains any mutable value in the form
     this.state = {
       // Contains error messages for specific components.
@@ -35,17 +66,15 @@ class EditAccountPage extends React.Component
       // name and the value to the error message to display.
       errors: {},
       // Contains the key/value pairs for inputed values.
-      user: {
-        username: "",
-        fullname: ""
-      },
+      user: def_user
     }
 
     // bind the handlers to 'this'.
     this.handleChangeFullName = this.handleChangeFullName.bind(this);
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.submitEditAccountForm = this.submitEditAccountForm.bind(this);
-    this.validateSignupForm = this.validateSignupForm.bind(this);
+    this.validateEditAccountForm = this.validateEditAccountForm.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
 
   // Write the handlers and functionality for everything.
@@ -88,9 +117,21 @@ class EditAccountPage extends React.Component
    * @param {dictionary} user Key/value pairs for username, password, email
    * that will be submitted to the database.
    */
-     submitEditAccountForm(review) {
-      console.log("submitting...");
-    }
+  submitEditAccountForm(user) {
+    this.axios.put('/users', {
+      _id: this.state.user._id,
+      name: user.fullname,
+      username: user.username,
+      email: this.state.user.email,
+      eventPrefs: this.state.user.eventPrefs
+    }).then(
+      (response) => {
+        console.log(response);
+      }
+    ).catch((error) => {
+      console.log("ERROR!", error);
+    });
+  }
 
     /**
    * Called imediately after the submit button is pressed. This function
@@ -100,37 +141,43 @@ class EditAccountPage extends React.Component
    * 
    * @param {*} event the submit button
    */
-     validateSignupForm(event) {
-      event.preventDefault();
-      let errors = this.state.errors;
-      errors.message = "";
-      
-      let hasError = false;
-      for (const [key, value] of Object.entries(errors)) {
-        if (value != "") hasError = true;
-      }
-  
-      let hasAllInfo = true;
-      for (const [key, value] of Object.entries(this.state.user)) {
-        if (value == "") hasAllInfo = false;
-      }
-  
-      if (hasError || !hasAllInfo) {
-        errors.message = "Please satisfy all requirements.";
-      } else {
-        console.log("no errors");
-        // Actually submit the form
-        var user = {
-          usr: this.state.user.username,
-          pw: this.state.user.password,
-          email: this.state.user.email
-        }
-        this.submitEditAccountForm(user);
-      }
-      this.setState({
-        errors: errors
-      });
+  validateEditAccountForm(event) {
+    event.preventDefault();
+    let errors = this.state.errors;
+    errors.message = "";
+    
+    let hasError = false;
+    for (const [key, value] of Object.entries(errors)) {
+      if (value != "") hasError = true;
     }
+
+    let hasAllInfo = true;
+    if (!this.state.user.username || this.state.user.username === "" ||
+        !this.state.user.fullname || this.state.user.fullname === ""
+    ) { hasAllInfo = false; }
+    // for (const [key, value] of Object.entries(this.state.user)) {
+    //   if (value == "") hasAllInfo = false;
+    // }
+
+    if (hasError || !hasAllInfo) {
+      errors.message = "Please satisfy all requirements.";
+    } else {
+      console.log("no errors");
+      // Actually submit the form
+      var user = {
+        usr: this.state.user.username,
+        name: this.state.user.fullname
+      }
+      this.submitEditAccountForm(user);
+    }
+    this.setState({
+      errors: errors
+    });
+  }
+
+  handleCancel() {
+    window.location = "https://localhost:3000/accountinformation/user?" + JSON.stringify(this.providedUser);
+  }
 
   render ()   // Here is the start of the render().
   {
@@ -143,9 +190,10 @@ class EditAccountPage extends React.Component
         <EditAccountForm
           // Pass the state values and handler functions as parameters
           // to assign to each component.
-          onSubmit={this.validateSignupForm}
+          onSubmit={this.validateEditAccountForm}
           onChangeFullName={this.handleChangeFullName}
           onChangeUsername={this.handleChangeUsername}
+          onCancel={this.handleCancel}
           errors={this.state.errors}
           user={this.state.user}
         />
