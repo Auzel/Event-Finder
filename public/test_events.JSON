@@ -13,7 +13,7 @@
             "name": "The Gorge Amphitheatre",
             "location": [40.110862, -88.232873],
             "event_ids": [81587470, 49732473, 71436899],
-            "review_ids": [21421746, 63265865, 30069077],
+            "review_ids": [],
             "rating_avg": 4.750
         },
         {
@@ -21,7 +21,7 @@
             "name": "NODUS",
             "location": [40.114262, -88.266634],
             "event_ids": [74541270, 50595570, 72248250],
-            "review_ids": [79672765, 64957018, 83019112],
+            "review_ids": [],
             "rating_avg": 4.000
         }
     ],
@@ -98,6 +98,32 @@
             "date": "12/29/2022",
             "image": "picsum.photos/100/100",
             "description": "The boxed moved. That was a problem. Peter had packed the box three hours before and there was nothing inside that should make it move. The question now was whether or not Peter was going to open it up and look inside to see why it had moved. The answer to that question was obvious. Peter dropped the package into the mailbox so he would never have to see it again."
+        }
+    ],
+    "reviews": [
+        {
+            "id": 84795708,
+            "user_id": "638d48325f77a68c47ef5795",
+            "rating": "4.5",
+            "visited_event": "Taylor Swift",
+            "visited_event_date": "",
+            "description": "Josh had spent year and year accumulating the information. He knew it inside out and if there was ever anyone looking for an expert in the field, Josh would be the one to call. The problem was that there was nobody interested in the information besides him and he knew it. Years of information painstakingly memorized and sorted with not a sole giving even an ounce of interest in the topic."
+        },
+        {
+            "id": 14119201,
+            "user_id": "638d48325f77a68c47ef5795",
+            "rating": "3.5",
+            "visited_event": "The Weeknd",
+            "visited_event_date": "",
+            "description": "There was something in the tree. It was difficult to tell from the ground, but Rachael could see movement. She squinted her eyes and peered in the direction of the movement, trying to decipher exactly what she had spied. The more she peered, however, the more she thought it might be a figment of her imagination. Nothing seemed to move until the moment she began to take her eyes off the tree. Then in the corner of her eye, she would see the movement again and begin the process of staring again."
+        },
+        {
+            "id": 83081087,
+            "user_id": "638d48325f77a68c47ef5795",
+            "rating": "4.0",
+            "visited_event": "Ariana Grande",
+            "visited_event_date": "",
+            "description": "He collected the plastic trash on a daily basis. It never seemed to end. Even if he cleaned the entire beach, more plastic would cover it the next day after the tide had come in. Although it was a futile effort that would never be done, he continued to pick up the trash each day."
         }
     ]
 }

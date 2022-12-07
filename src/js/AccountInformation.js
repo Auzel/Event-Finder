@@ -4,29 +4,83 @@ import NavBar from "./NavBar.js";
 import "../scss/AccountInformation.scss";
 import { Link } from 'react-router-dom';
 import NavButton from './NavButton';
+import axios from 'axios';
+import { getToken } from './token.js';
+import { getUserId } from './userId.js';
+// import getUserI
 
 // Here we are creating a react class called App.
 class AccountInformation extends React.Component  
 {
+  constructor(props) {
+    super(props);
+
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios.defaults.headers.common['Authorization'] =    
+         'Bearer ' + getToken();
+    
+    this.state = {
+      user: {
+        name: "",
+        email: "",
+        username: "",
+        eventPrefs: []
+      }
+    }
+  }
+
+  componentDidMount() {
+
+    // get user information and update the state
+    this.axios.get('/users', {
+      _id: getUserId()
+    }).then(
+      (response) => {
+        console.log(response);
+
+        this.setState({
+          user: {
+            name: response.data.data.name,
+            email: response.data.data.email,
+            username: response.data.data.username,
+            eventPrefs: response.data.data.eventPrefs
+          }
+        });
+
+        // let temp = response.data.data._id;
+
+        // Update global context with user id
+        // setUserId(temp);
+      }
+      ).catch((error) => {
+        console.log("ERROR!", error);
+        this.setState({
+          errors: {
+            message: "Unable to acces the user"
+          }
+        });
+      })
+    }
  
   render ()   // Here is the start of the render().
   {
+    console.log(this.state.user);
     // Here we are returning the format of the List View.
     return (
       <div>
         
         <NavBar variant="account" logoLink="/" />
 
-        <div class="all">
-        <div class="sideBar">
+        <div className="all">
+        <div className="sideBar">
 
-          <div class="informationDiv">
+          <div className="informationDiv">
 
             <Link to = "/AccountInformation" className = "AccountInformationLink"> Information </Link>
 
           </div>
 
-          <div class="HistoryDiv">
+          <div className="HistoryDiv">
 
             <Link to = "/AccountHistory" className = "AccountHistoryLink"> History </Link>
 
@@ -43,15 +97,15 @@ class AccountInformation extends React.Component
 
           <div className="fieldsAI">
 
-            <p> Full Name: </p>
+            <p> Full Name: {this.state.user.name}</p>
 
             <br/>
 
-            <p> Username: </p>
+            <p> Username: {this.state.user.username}</p>
 
             <br/>
 
-            <p> Email: </p>
+            <p> Email: {this.state.user.email}</p>
 
           </div>
 
@@ -60,7 +114,10 @@ class AccountInformation extends React.Component
 
           <div className="linkAI">
 
-            <Link to = "/EditAccountPage" className="editAccountPageLink"> EDIT ACCOUNT </Link>
+            {Object.keys(this.state.user).length > 0 ? 
+            <Link to = {"/EditAccountPage?user=" + JSON.stringify(this.state.user)} className="editAccountPageLink"> EDIT ACCOUNT </Link> :
+            <></>
+            }
 
           </div>
 

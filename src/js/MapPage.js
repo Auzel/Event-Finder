@@ -7,7 +7,8 @@ import { ListItem } from '@mui/material';
 import GreyBox from "../assets/grey_box.png"
 import { ListItemText, Rating } from '@mui/material';
 import DetailedInformationPage from './DetailedInformationPage.js';
-import { TurnRight } from '@mui/icons-material';
+import { getUserId, setUserId } from './userId.js';
+import {Link} from "react-router-dom"
 
 /**
  * Explanation of implementation:
@@ -15,8 +16,8 @@ import { TurnRight } from '@mui/icons-material';
  */
 
 const containerStyle = {
-  width: "100vw",//window.innerWidth,
-  height: "100vh"//window.innerHeight - 48
+  width: "100%",//window.innerWidth,
+  height: "100%"//window.innerHeight - 48
 };
 
 const center = {
@@ -25,10 +26,13 @@ const center = {
 };
 
 export default class MapPage extends React.Component {
+  // static contextType = GlobalContext;
+
   constructor(props) {
     super(props);
     
     this.state = {
+      userId: null,
       venues: [],
       selectedMarker: null,
       // Variable set to true when list item button pushed and we should scroll to it AFTER next update
@@ -42,30 +46,31 @@ export default class MapPage extends React.Component {
       },
       selectedVenueEvents: [],
       selectedEvent: {}
-    }
+    };
 
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.venueFilter = this.venueFilter.bind(this);
     this.listItemOnClick = this.listItemOnClick.bind(this);
+    this.keydownListener = this.keydownListener.bind(this);
+  }
 
-    // useEffect(() => {
-    //   const listener = e => {
-    //     if (e.key === "Escape") {
-    //       this.setState({
-    //         selectedEvent: null,
-    //         events: null
-    //       })
-    //     }
-    //   };
-    //   window.addEventListener("keydown", listener);
-  
-    //   return () => {
-    //     window.removeEventListener("keydown", listener);
-    //   };
-    // }, []);
+  keydownListener(e) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      this.setState({
+        selectedEvent: {},
+        selectedMarker: null
+      })
+      return false;
+    }
   }
 
   componentDidMount() {
+    document.addEventListener("keydown", this.keydownListener, false);
+
+    let userId = getUserId();
+    console.log("USER ID", userId);
+
     fetch(
       // Get the test data
       "http://localhost:3000/test_events.JSON"
@@ -73,18 +78,22 @@ export default class MapPage extends React.Component {
       (response) => response.json()
     ).then(
       (json) => {
-        // console.log(json);
+        console.log("JSON", json);
         if (!json || !json["venues"]) {
           console.log("No json venues");
           return;
         }
         this.setState({
           venues: json["venues"]
-        })
+        });
       }
     ).catch(
-      (error) => console.log(error)
+      (error) => console.log("ERROR", error)
     );
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.keydownListener, false);
   }
 
   venueFilter(event) {
@@ -180,7 +189,8 @@ export default class MapPage extends React.Component {
    */
   setSelectedMarker(id) {
     this.setState({
-      selectedMarker: id
+      selectedMarker: id,
+      selectedEvent: {}
     }, () => {return this.updateSelectedMarkerVenueInfo()})
   }
 
@@ -193,9 +203,11 @@ export default class MapPage extends React.Component {
   }
 
   render() {
-    console.log(this.state.selectedMarker);
+    // console.log(this.state.selectedMarker);
     return (
       <div>
+        <NavBar variant="map"></NavBar>
+        <div className='mapContainerDiv'>
         <LoadScript googleMapsApiKey="AIzaSyBwrwXQZRX_inRPmoN4xzOJDZ3tHrcY7Mc">
           <GoogleMap
             mapContainerStyle={containerStyle}
@@ -224,6 +236,7 @@ export default class MapPage extends React.Component {
                             <InfoWindowF onCloseClick={() => this.setSelectedMarker(null)}>
                               <div className='eventPopUp'>
                                 <h2 className="venueTitle">{marker.name}</h2>
+                                <Link to={"/AddReviewPage?venue_info=" + JSON.stringify(this.state.selectedVenueInfo)}>Add Review</Link>
                                 <Rating readOnly precision={0.5} value={this.state.selectedVenueInfo.rating_avg}></Rating>
                                 {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}> */}
                                   <List style={{maxHeight: "300px", overflow: "auto"}}>
@@ -261,8 +274,10 @@ export default class MapPage extends React.Component {
         {this.state.selectedMarker ? <div id='detailInfoDiv'>
           <DetailedInformationPage
             event={this.state.selectedEvent}
+            venue={this.state.selectedVenueInfo}
             /></div> : <></>
         }
+        </div>
       </div>
     );
   }

@@ -1,3 +1,5 @@
+@import "./styles.scss";
+
 .sideBar 
 {
   height: 100%;
@@ -6,6 +8,7 @@
   z-index: 99;
   background-color: #E4E4E4;
   margin-top: 48px;
+  float: left;
 }
 
 .informationDiv
@@ -48,4 +51,38 @@
 .AccountHistoryLink:hover
 {
   font-size: 25px;
+}
+
+.accountHistory
+{
+  float: right;
+  width: 65%;
+  margin-top: 10%;
+}
+
+.headingAH
+{
+  font-size: 50px;
+}
+
+.reviewsText
+{
+  font-size: 25px;
+}
+
+.listViewDiv {
+  width: 600px;
+  height: 400px;
+}
+
+.reviewCard {
+
+}
+
+.dateText {
+  font-size: 12px;
+}
+
+.descriptionText {
+  font-size: 16px;
 }

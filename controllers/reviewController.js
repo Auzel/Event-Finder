@@ -63,11 +63,14 @@ const getReviewList = function(req, res) {
 // done
 const createReview = function(req, res) {
     try {
-        jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        console.log(bearerToke);
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
-            req.body._id = decoded._id;
+            req.body._id = decoded.user_id;
         });
 
         var user_id = req.body.user_id;

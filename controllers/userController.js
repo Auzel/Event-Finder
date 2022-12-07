@@ -18,7 +18,7 @@ const createUser = function(req, res) {
         }
 
         const token = jsonwebtoken.sign({_id: user._id}, secrets.jwt_sign_phrase);
-        return res.cookie('token', token, {expire: new Date() + 3}).status(201).json(message.response("Created User", {_id: user._id, username: user.username, email: user.email}));
+        return res.cookie('token', token, {expire: new Date() + 3}).status(201).json(message.response("Created User", {token: token, _id: user._id, username: user.username, email: user.email}));
     });
 }
 
@@ -32,7 +32,7 @@ const signin = async function(req, res) {
 
         if (user.authenticate(password)) {
             const token = jsonwebtoken.sign({_id: user._id}, secrets.jwt_sign_phrase);
-            return res.cookie('token', token, {expire: new Date() + 3}).status(200).json(message.response("User signed in", {_id: user._id, username: user.username, email: user.email}));
+            return res.cookie('token', token, {expire: new Date() + 3}).status(200).json(message.response("User signed in", {token: token, _id: user._id, username: user.username, email: user.email}));
         } else {
             return res.status(400).json(message.response("Email and password don't match", {}));
         }
@@ -54,7 +54,9 @@ const signout = function(req, res) {
 
 const getUser = async function(req, res) {
     try {
-        jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
@@ -75,7 +77,9 @@ const getUser = async function(req, res) {
 
 const replaceUser = async function(req, res) {
     try {
-        jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
@@ -83,7 +87,9 @@ const replaceUser = async function(req, res) {
         });
 
         let new_user = new User(req.body);
-        let user = await User.findByIdAndUpdate(new_user._id, new_user).exec();
+        // Update the user and respond with the NEW user
+        let user = await User.findByIdAndUpdate(new_user._id, new_user, {new: true}).exec();
+        console.log("RESPONDED USER", user);
         if (!user) {
             return res.status(404).json(message.response("User Not Found", {}));
         } else {
@@ -93,11 +99,32 @@ const replaceUser = async function(req, res) {
     } catch (err) {
         return res.status(500).json(message.response("Replace User Failed", {}));
     }
+    // try {
+    //     jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+    //         if (err) {
+    //             return res.status(401).json(message.response("Unauthorized", {}));
+    //         }
+    //         req.body._id = decoded._id;
+    //     });
+
+    //     let new_user = new User(req.body);
+    //     let user = await User.findByIdAndUpdate(new_user._id, new_user).exec();
+    //     if (!user) {
+    //         return res.status(404).json(message.response("User Not Found", {}));
+    //     } else {
+    //         return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs}));
+    //     }
+
+    // } catch (err) {
+    //     return res.status(500).json(message.response("Replace User Failed", {}));
+    // }
 }
 
 const checkSignin = function(req, res) {
     try {
-        jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
