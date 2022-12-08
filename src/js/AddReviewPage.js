@@ -140,10 +140,10 @@ export default class AddReviewPage extends React.Component
     //   eventAttendedDate: JSON.stringify(this.state.review.date.format("MM-DD-YY"))
 
     this.axios.post('/reviews', {
-      token: (getToken()),
       user_id: (getUserId()),
       venue_id: (this.state.venue.id),
       rating: (this.state.review.rating),
+      short_comment: "",
       long_comment: (this.state.review.description),
       eventAttendedName: (this.state.review.title),
       eventAttendedDate: (this.state.review.date.format("MM-DD-YY"))

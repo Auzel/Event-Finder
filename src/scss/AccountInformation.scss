@@ -84,7 +84,29 @@
   font-size: 50px;
 }
 
-.editAccountPageLink:hover
-{
+.editAccountPageLink:hover {
   background-color: $primary;
+}
+
+p {
+  font-size: 18px;
+}
+
+.componentsFlexDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.fieldsAISubContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 15px;
+}
+
+.fieldAI {
+  margin-left: 12px;
 }

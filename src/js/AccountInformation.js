@@ -7,6 +7,7 @@ import NavButton from './NavButton';
 import axios from 'axios';
 import { getToken } from './token.js';
 import { getUserId } from './userId.js';
+import { TextField } from '@mui/material';
 // import getUserI
 
 // Here we are creating a react class called App.
@@ -24,8 +25,10 @@ class AccountInformation extends React.Component
         name: "",
         email: "",
         username: "",
-        eventPrefs: []
-      }
+        eventPrefs: [],
+        reviews: []
+      },
+      review_objs: []
     }
   }
 
@@ -35,24 +38,34 @@ class AccountInformation extends React.Component
     this.axios.get('/users', {
       _id: getUserId()
     }).then(
-      (response) => {
-        console.log(response);
+      (res) => {
+        console.log(res);
 
         this.setState({
           user: {
-            name: response.data.data.name,
-            email: response.data.data.email,
-            username: response.data.data.username,
-            eventPrefs: response.data.data.eventPrefs
+            name: res.data.data.name,
+            email: res.data.data.email,
+            username: res.data.data.username,
+            eventPrefs: res.data.data.eventPrefs,
+            reviews: res.data.data.reviews
           }
         });
 
-        // let temp = response.data.data._id;
+        let review_objs = [];
+        if (res.data.data.reviews) {
+          for (var i = 0; i < Math.min(res.data.data.reviews.length, 5); i++) {
+            this.axios.get(`/reviews/${res.data.data.reviews[i]}`, {}).then((res) => {
+              review_objs.push(res.data.data);
+            }).catch((error) => {
+              console.log(error);
+            })
+          }
+        }
 
-        // Update global context with user id
-        // setUserId(temp);
-      }
-      ).catch((error) => {
+        this.setState({
+          review_objs: review_objs
+        })
+      }).catch((error) => {
         console.log("ERROR!", error);
         this.setState({
           errors: {
@@ -72,7 +85,7 @@ class AccountInformation extends React.Component
         <NavBar variant="account" logoLink="/" />
 
         <div className="all">
-        <div className="sideBar">
+        {/* <div className="sideBar">
 
           <div className="informationDiv">
 
@@ -86,14 +99,26 @@ class AccountInformation extends React.Component
 
           </div>
 
-        </div>
+        </div> */}
 
         <div className="accountInformation">
-
-          <div className="headingAI"> ACCOUNT INFORMATION </div>
-
-          <br/>
-          <br/>
+          <h1> ACCOUNT INFORMATION </h1>
+          <div className='componentsFlexDiv'>
+            <div className='fieldsAIContainer'>
+              <div className='fieldsAISubContainer'>
+                <h3 className='fieldAILabel'>Full Name:</h3>
+                <p className='fieldAI'>{this.state.user.name}</p>
+              </div>
+              <div className='fieldsAISubContainer'>
+                <h3 className='fieldAILabel'>Username:</h3>
+                <p className='fieldAI'>{this.state.user.username}</p>
+              </div>
+              <div className='fieldsAISubContainer'>
+                <h3 className='fieldAILabel'>Email:</h3>
+                <p className='fieldAI'>{this.state.user.email}</p>
+              </div>
+            </div>
+          </div>
 
           <div className="fieldsAI">
 
