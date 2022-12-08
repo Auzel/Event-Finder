@@ -5,34 +5,39 @@ var reviewModel = require("../models/review")
 
 var message = require('../models/message');
 const jsonwebtoken = require('jsonwebtoken');
+const { QueryBuilder } = require('@mui/icons-material');
 
 
-// done
 const getReviewList = function(req, res) {
     
     try {
-        // const bearerHeader = req.headers["authorization"];
-        // const bearerToken = bearerHeader.split(' ')[1]
-        // console.log(bearerToken);
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        console.log(bearerToken);
         
-        // jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-        //     if (err) {
-        //         return res.status(401).json(message.response("Unauthorized", {}));
-        //     }
-        //     req.body._id = decoded.user_id;
-        // });
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
+            if (err) {
+                return res.status(401).json(message.response("Unauthorized", {}));
+            }
+            req.body._id = decoded.user_id;
+        });
 
         var query = [];
         var count = false;
-        console.log()
+        var limit = 10;
+
+        if (req.query.limit) {
+            limit = req.query.limit
+        }
+        query.push({$limit: limit});
+        
+        console.log(req.query.venue_id)
         if (req.query.venue_id) {
-            query.push({venue_id: req.query.venue_id});
+            query.push({$match: {venue_id: req.query.venue_id}});
         }
         if (req.query.count) {
             count = true;
         }
-
-        console.log(req.query.venue_id)
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
             if (err) {
@@ -41,7 +46,6 @@ const getReviewList = function(req, res) {
             }
 
             let reviews = db.collection("reviews").aggregate(query);
-            console.log(reviews);
 
             reviews.toArray(function(err, result) {
                 if (err) {
@@ -68,12 +72,10 @@ const getReviewList = function(req, res) {
 }
 
 
-// done
 const createReview = function(req, res) {
     try {
         const bearerHeader = req.headers["authorization"];
         const bearerToken = bearerHeader.split(' ')[1]
-        console.log(bearerToken);
         
         jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
@@ -94,8 +96,6 @@ const createReview = function(req, res) {
             return;
         }
 
-        console.log(req.body);
-
         mongoose.connect(secrets.mongo_connection, function(err, db) {
             if (err) {
                 res.status(500).send(message.response("Invalid", "Server Error"));
@@ -106,8 +106,11 @@ const createReview = function(req, res) {
             aggregate.user_id = user_id;
             aggregate.venue_id = venue_id;
 
+            var final_rating = 0
+
             if (req.body.rating != null && !Number.isNaN(req.body.rating) && req.body.rating >= 0 && req.body.rating <= 5) {
                 aggregate.rating = parseInt(req.body.rating);
+                final_rating = parseInt(req.body.rating)
             }
             if (req.body.short_comment) {
                 aggregate.short_comment = req.body.short_comment;
@@ -123,21 +126,58 @@ const createReview = function(req, res) {
             }
 
             const finalReview = new reviewModel.review(aggregate);
+            console.log(finalReview);
 
             finalReview.save().then((response) => {
-                console.log("worked")
-                res.status(201).send(message.response(finalReview._id, finalReview));
+                console.log("Made it here");
+                db.collection("users").updateOne(
+                    { _id : mongoose.Types.ObjectId(user_id)},
+                    {
+                        $push: {reviews: finalReview._id}
+                    }
+                ).then((response) => {
+                    console.log("Made it here2");
+
+                    var update_json = {};
+                    user = db.collection("venues").findOne(
+                        { venue_id: venue_id }
+                    )
+                    .then((venue) => {
+                        console.log(venue);
+                        if (venue) {
+                            db.collection("venues").updateOne(
+                                { venue_id : venue_id},
+                                {
+                                    $inc: {rawReviewTotal: final_rating, numberOfReviews: 1},
+                                    $push: {reviews: mongoose.Types.ObjectId(finalReview._id)}
+                                }
+                            )
+                        }
+                        else {
+                            console.log("Made it here");
+                            db.collection("venues").insertOne(
+                                {
+                                    venue_id: venue_id,
+                                    rawReviewTotal: final_rating, 
+                                    numberOfReviews: 1,
+                                    reviews: [mongoose.Types.ObjectId(finalReview._id)]
+                                }
+                            )
+                        }
+
+                        console.log("worked")
+                        res.status(201).send(message.response(finalReview._id, finalReview));
+                    
+                    });
+                    
+                }).catch(() => {
+                    console.log("unable to add to reviews array in users");
+                    res.status(500).send(message.response(finalReview._id, {}));
+                })
             }).catch((error) => {
                 console.log("error");
-                res.status(201).send(message.response(finalReview._id, {}));
+                res.status(500).send(message.response(finalReview._id, {}));
             });
-
-            // db.collection("history").updateOne(
-            //     { user_id : mongoose.Types.ObjectId(user_id)},
-            //     {
-            //         $push: {venuesReviewed: mongoose.Types.ObjectId(review._id)}
-            //     }
-            // );
                    
         });
 
@@ -149,7 +189,6 @@ const createReview = function(req, res) {
 }
 
 
-// done
 const getReview = function(req, res) {
     const { id } = req.params;
     var select = {}
@@ -158,16 +197,16 @@ const getReview = function(req, res) {
     }
 
     try {
-        // const bearerHeader = req.headers["authorization"];
-        // const bearerToken = bearerHeader.split(' ')[1]
-        // console.log(bearerToken);
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        console.log(bearerToken);
         
-        // jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-        //     if (err) {
-        //         return res.status(401).json(message.response("Unauthorized", {}));
-        //     }
-        //     req.body._id = decoded.user_id;
-        // });
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
+            if (err) {
+                return res.status(401).json(message.response("Unauthorized", {}));
+            }
+            req.body._id = decoded.user_id;
+        });
 
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
@@ -185,7 +224,7 @@ const getReview = function(req, res) {
                 }
             )
             .then((review) => {
-                if (task) {
+                if (review) {
                     res.send(message.response(200, review));
                 }
                 else {
@@ -203,31 +242,22 @@ const getReview = function(req, res) {
 }
 
 
-// done
 const replaceReview = function(req, res) {
     const { id } = req.params;
 
 
     try {
-        jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        console.log(bearerToken);
+        
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
                 return res.status(401).json(message.response("Unauthorized", {}));
             }
-            req.body._id = decoded._id;
+            req.body._id = decoded.user_id;
         });
 
-
-        var user_id = req.body.user_id;
-        var venue_id = req.body.venue_id;
-
-        if (!user_id) {
-            res.status(400).send(message.response("Invalid - User ID field needs to be included", {}));
-            return;
-        }
-        if (!venue_id) {
-            res.status(400).send(message.response("Invalid - Venue ID field needs to be included", {}));
-            return;
-        }
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
             if (err) {
@@ -235,32 +265,40 @@ const replaceReview = function(req, res) {
                 return;
             }
 
-            var new_object = {user_id: user_id, venue_id: venue_id};
-            if (req.body.rating && !Number.isNaN(req.body.rating) && req.body.rating >= 0 && req.body.rating <= 5) {
-                aggregate.rating = parseInt(rating)
+            var new_object = {};
+            if (req.body.user_id) {
+                new_object.user_id = req.body.user_id;
+            }
+            if (req.venue_id) {
+                new_object.venue_id = req.body.venue_id;
             }
             if (req.body.rating && !Number.isNaN(req.body.rating) && req.body.rating >= 0 && req.body.rating <= 5) {
-                aggregate.rating = parseInt(rating);
+                new_object.rating = parseInt(req.body.rating)
             }
-            if (req.bodyshort_comment) {
-                aggregate.short_comment = req.bodyshort_comment;
+            if (req.body.rating && !Number.isNaN(req.body.rating) && req.body.rating >= 0 && req.body.rating <= 5) {
+                new_object.rating = parseInt(req.body.rating);
             }
-            if (req.bodylong_comment) {
-                aggregate.long_comment = req.bodylong_comment;
+            if (req.body.short_comment) {
+                new_object.short_comment = req.body.short_comment;
             }
-            if (req.bodyeventAttendedName) {
-                aggregate.eventAttendedDate = req.bodyeventAttendedDate;
+            if (req.body.long_comment) {
+                new_object.long_comment = req.body.long_comment;
             }
-            if (req.bodyeventAttendedDate) {
-                aggregate.eventAttendedDate = req.bodyeventAttendedDate;
+            if (req.body.eventAttendedName) {
+                new_object.eventAttendedName = req.body.eventAttendedName;
+            }
+            if (req.body.eventAttendedDate) {
+                new_object.eventAttendedDate = req.body.eventAttendedDate;
             }
 
             db.collection("reviews").update( 
                 {_id: mongoose.Types.ObjectId(id)},
                 { $set: new_object }
-            );
-
-            res.status(200).send(message.response("Success", "Sucessfully updated review"));
+            ).then(() => {
+                res.status(200).send(message.response("Success", "Sucessfully updated review"));
+            }).catch(() => {
+                return res.status(500).json(message.response("Update Review Failed", {}));
+            })
                 
         });
 
@@ -275,22 +313,21 @@ const replaceReview = function(req, res) {
 
 
 
-// Done
 const deleteReview = function(req, res) {
     const { id } = req.params;
     const user_id = req.body.user_id;
     
     try {
-        // const bearerHeader = req.headers["authorization"];
-        // const bearerToken = bearerHeader.split(' ')[1]
-        // console.log(bearerToken);
+        const bearerHeader = req.headers["authorization"];
+        const bearerToken = bearerHeader.split(' ')[1]
+        console.log(bearerToken);
         
-        // jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-        //     if (err) {
-        //         return res.status(401).json(message.response("Unauthorized", {}));
-        //     }
-        //     req.body._id = decoded.user_id;
-        // });
+        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
+            if (err) {
+                return res.status(401).json(message.response("Unauthorized", {}));
+            }
+            req.body._id = decoded.user_id;
+        });
 
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
@@ -306,17 +343,26 @@ const deleteReview = function(req, res) {
                     db.collection("users").updateOne(
                         { user_id : mongoose.Types.ObjectId(user_id)},
                         {
-                            $pull: {venuesReviewed: mongoose.Types.ObjectId(id)}
+                            $pull: {reviews: mongoose.Types.ObjectId(id)}
                         }
                     ).then(() => {
                         db.collection("reviews").deleteOne( {
                             _id: mongoose.Types.ObjectId(id)
                         }).then(() => {
-                            res.status(200).send(message.response(id, "Successfully deleted"));
+                            db.collection("venues").updateOne(
+                                { reviews : {$elemMatch : {$eq: mongoose.Types.ObjectId(id)}}},
+                                {
+                                    $inc: {rawReviewTotal: -1 * final_rating, numberOfReviews: -1},
+                                    $pull: {reviews: mongoose.Types.ObjectId(id)}
+                                }
+                            ).then(() => {
+                                res.status(200).send(message.response(id, "Successfully deleted"));
+                            }).catch(()=> {console.log("failed to delete review from venues table")});
+
                         }).catch(() => {
                             console.log("unable to delete review from review table");
                             res.status(500).send(message.response(id, {}));
-                        })
+                        });
                         
                     }).catch(() => {
                         console.log("unable to delete review from users table");
