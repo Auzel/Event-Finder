@@ -9,6 +9,7 @@ var UserSchema = new mongoose.Schema({
     encryptedPassword: {type: String, required: true},
     email: {type: String, required: true, unique: true, dropDups: true},
     eventPrefs: {type: [String], required: true},
+    reviews: {type: [String], default: []},
     plainPass: String
 }, {timestamps: true});
 

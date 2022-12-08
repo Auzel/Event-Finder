@@ -2,6 +2,7 @@ const secrets = require('../config/secrets');
 const message = require('../models/message');
 const User = require("../models/user");
 const {validationResult} = require('express-validator');
+const {verifyToken} = require("./verifyToken");
 const jsonwebtoken = require('jsonwebtoken');
 
 const createUser = function(req, res) {
@@ -44,6 +45,10 @@ const signin = async function(req, res) {
 
 const signout = function(req, res) {
     try {
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
+
         res.clearCookie("token");
         return res.status(200).json(message.response("Signout Successful", {}));
     } catch (err) {
@@ -54,14 +59,9 @@ const signout = function(req, res) {
 
 const getUser = async function(req, res) {
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded._id;
-        });
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
         let user = await User.findById(req.body._id).exec();
         if (!user) {
@@ -70,6 +70,7 @@ const getUser = async function(req, res) {
             return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs}));
         }
     } catch (err) {
+        console.log(err);
         return res.status(500).json(message.response("Get User Failed", {}));
     }
 }
@@ -77,19 +78,12 @@ const getUser = async function(req, res) {
 
 const replaceUser = async function(req, res) {
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded._id;
-        });
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
         let new_user = new User(req.body);
-        // Update the user and respond with the NEW user
         let user = await User.findByIdAndUpdate(new_user._id, new_user, {new: true}).exec();
-        console.log("RESPONDED USER", user);
         if (!user) {
             return res.status(404).json(message.response("User Not Found", {}));
         } else {
@@ -99,37 +93,14 @@ const replaceUser = async function(req, res) {
     } catch (err) {
         return res.status(500).json(message.response("Replace User Failed", {}));
     }
-    // try {
-    //     jsonwebtoken.verify(req.cookies.token, secrets.jwt_sign_phrase, (err, decoded) => {
-    //         if (err) {
-    //             return res.status(401).json(message.response("Unauthorized", {}));
-    //         }
-    //         req.body._id = decoded._id;
-    //     });
-
-    //     let new_user = new User(req.body);
-    //     let user = await User.findByIdAndUpdate(new_user._id, new_user).exec();
-    //     if (!user) {
-    //         return res.status(404).json(message.response("User Not Found", {}));
-    //     } else {
-    //         return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs}));
-    //     }
-
-    // } catch (err) {
-    //     return res.status(500).json(message.response("Replace User Failed", {}));
-    // }
 }
 
 const checkSignin = function(req, res) {
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            return res.status(200).json(message.response("OK", {}));
-        });
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
+        return res.status(200).json(message.response("OK", {}));
     } catch (err) {
         return res.status(500).json(message.response("Check Signin Failed", {}));
     }
