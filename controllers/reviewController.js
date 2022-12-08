@@ -11,16 +11,9 @@ const { QueryBuilder } = require('@mui/icons-material');
 const getReviewList = function(req, res) {
     
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        console.log(bearerToken);
-        
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded.user_id;
-        });
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
         var query = [];
         var count = false;
@@ -74,17 +67,11 @@ const getReviewList = function(req, res) {
 
 const createReview = function(req, res) {
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded.user_id;
-        });
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
-        var user_id = req.body.user_id;
+        var user_id = req.body._id;
         var venue_id = req.body.venue_id;
 
         if (!user_id) {
@@ -197,17 +184,9 @@ const getReview = function(req, res) {
     }
 
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        console.log(bearerToken);
-        
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded.user_id;
-        });
-
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
             if (err) {
@@ -247,17 +226,9 @@ const replaceReview = function(req, res) {
 
 
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        console.log(bearerToken);
-        
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded.user_id;
-        });
-
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
             if (err) {
@@ -266,8 +237,8 @@ const replaceReview = function(req, res) {
             }
 
             var new_object = {};
-            if (req.body.user_id) {
-                new_object.user_id = req.body.user_id;
+            if (req.body._id) {
+                new_object.user_id = req.body._id;
             }
             if (req.venue_id) {
                 new_object.venue_id = req.body.venue_id;
