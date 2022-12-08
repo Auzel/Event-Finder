@@ -289,17 +289,9 @@ const deleteReview = function(req, res) {
     const user_id = req.body.user_id;
     
     try {
-        const bearerHeader = req.headers["authorization"];
-        const bearerToken = bearerHeader.split(' ')[1]
-        console.log(bearerToken);
-        
-        jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
-            if (err) {
-                return res.status(401).json(message.response("Unauthorized", {}));
-            }
-            req.body._id = decoded.user_id;
-        });
-
+        if (!verifyToken(req)) {
+            return res.status(401).json(message.response("Unauthorized", {})); 
+        }
 
         mongoose.connect(secrets.mongo_connection, function(err, db) {
             if (err) {
