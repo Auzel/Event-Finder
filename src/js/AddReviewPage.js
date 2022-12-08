@@ -130,14 +130,23 @@ export default class AddReviewPage extends React.Component
    */
   submitReviewForm(review) {
     // console.log("submitting...", review);
+    // this.axios.post('/reviews', {
+    //   token: JSON.stringify(getToken()),
+    //   user_id: JSON.stringify(getUserId()),
+    //   venue_id: JSON.stringify(this.state.venue.id),
+    //   rating: JSON.stringify(this.state.review.rating),
+    //   long_comment: JSON.stringify(this.state.review.description),
+    //   eventAttendedName: JSON.stringify(this.state.review.title),
+    //   eventAttendedDate: JSON.stringify(this.state.review.date.format("MM-DD-YY"))
+
     this.axios.post('/reviews', {
-      token: JSON.stringify(getToken()),
-      user_id: JSON.stringify(getUserId()),
-      venue_id: JSON.stringify(this.state.venue.id),
-      rating: JSON.stringify(this.state.review.rating),
-      long_comment: JSON.stringify(this.state.review.description),
-      eventAttendedName: JSON.stringify(this.state.review.title),
-      eventAttendedDate: JSON.stringify(this.state.review.date.format("MM-DD-YY"))
+      token: (getToken()),
+      user_id: (getUserId()),
+      venue_id: (this.state.venue.id),
+      rating: (this.state.review.rating),
+      long_comment: (this.state.review.description),
+      eventAttendedName: (this.state.review.title),
+      eventAttendedDate: (this.state.review.date.format("MM-DD-YY"))
     }).then(
       (response) => {
         console.log("RESPONSE", response);
