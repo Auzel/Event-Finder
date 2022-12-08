@@ -34,20 +34,13 @@ const getItems = async function(req, res, slug){
             
         }
         res.status(200).send(message.response("Ok", output));
-        
-
     }
-
-
-
 }
 
 const getVenueList = function(req, res) {
     const slug='venues.json'
     getItems(req,res,slug)
 }
-
-
 
 const getVenue = function(req, res) {
     const id = req.params.id
@@ -68,16 +61,23 @@ const getVenueEvents = async function(venu_id) {
     params['apikey']=secrets.ticket_master_api_key;
     params['venueId']=venu_id
 
-    const res = await api.get(slug,{ params })
-  
-    var event_ids=[]
-    if (res.data){
-        var events=res.data._embedded.events
-        for (var event of events){
-            event_ids.push(event.id)
-        }
-    }
-    return event_ids;
+    // const res = await 
+    api.get(slug,{ params }).then(
+        (response) => {
+            var event_ids=[];
+            if (res.data){
+                console.log("RESPONSE:",res.data);
+                var events=res.data._embedded.events
+                for (var event of events){
+                    event_ids.push(event.id)
+                }
+            }
+            return event_ids;
+        }).catch(
+        (error) => {
+            console.log("ERROR", error);
+            return [];
+        });  
 }
 
 

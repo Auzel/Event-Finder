@@ -67,7 +67,7 @@ const getUser = async function(req, res) {
         if (!user) {
             return res.status(404).json(message.response("User Not Found", {}));
         } else {
-            return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs}));
+            return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs, reviews: user.reviews ? user.reviews : []}));
         }
     } catch (err) {
         console.log(err);
