@@ -3,6 +3,7 @@ var secrets = require('../config/secrets');
 var mongoose = require('mongoose');
 var axios =require('axios');
 var message = require('../models/message');
+var reviewModel = require("../models/review")
 
 
 const getItems = async function(req, res, slug){
@@ -10,30 +11,43 @@ const getItems = async function(req, res, slug){
     const api = axios.create({baseURL: "https://app.ticketmaster.com/discovery/v2/",responseType: 'json'});
     params['apikey']=secrets.ticket_master_api_key;
     
-    const res2 = await api.get(slug,{ params })
-    
-    if (res2.data){
-        var output=[]
-        var venues;
-        if (res2.data._embedded && res2.data._embedded.venues){
-            venues=res2.data._embedded.venues;
-        } else{
-            venues=[res2.data];
-        }
-        for (var venue of venues){
-            var myvenue={};
+    try {
+        const res2 = await api.get(slug,{ params })
+        if (res2.data){
+            var output=[]
+            var venues;
+            if (res2.data._embedded && res2.data._embedded.venues){
+                venues=res2.data._embedded.venues;
+            } else{
+                venues=[res2.data];
+            }
+            for (var venue of venues){
+                var myvenue={};
 
-            myvenue['name']=venue.name
-            myvenue['location']=venue.location
-            myvenue['id']=venue.id
-            myvenue['event_ids']=await getVenueEvents(venue.id)
-            output.push(myvenue)
-            await rate_limit_helper()
-            //reviews id list
-            //myvenue['rating']= get from database
-            
+                myvenue['name']=venue.name
+                myvenue['location']=venue.location
+                myvenue['id']=venue.id
+                myvenue['event_ids']=await getVenueEvents(venue.id)
+                
+                var reviews = await reviewModel.review.find({"venue_id": venue.id},{"_id": 1}) //to be changed to venue query after caching
+                myvenue['review_ids'] = reviews.map(e=>e.id)
+                
+                var ratings=reviews.map(e=>e.rating)
+                var avg_rating;
+                ratings.length===0 ? avg_rating = 0 : avg_rating = ratings.reduce((a, b) => a + b, 0) / ratings.length
+                myvenue['avg_rating'] = avg_rating
+
+                output.push(myvenue)
+                //await rate_limit_helper()
+            }
+            res.status(200).send(message.response("Ok", output));
+
+        } else {
+            res.status(500).send(message.response("Error", "Server temporarily down"));
         }
-        res.status(200).send(message.response("Ok", output));
+
+    } catch (err){
+        res.status(404).send(message.response("Error", err.message));
     }
 }
 
