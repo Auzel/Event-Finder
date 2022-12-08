@@ -28,23 +28,17 @@ const getItems = async function(req, res, slug){
                 myvenue['location']=venue.location
                 myvenue['id']=venue.id
                 myvenue['event_ids']=await getVenueEvents(venue.id)
+                
+                var reviews = await reviewModel.review.find({"venue_id": venue.id},{"_id": 1}) //to be changed to venue query after caching
+                myvenue['review_ids'] = reviews.map(e=>e.id)
+                
+                var ratings=reviews.map(e=>e.rating)
+                var avg_rating;
+                ratings.length===0 ? avg_rating = 0 : avg_rating = ratings.reduce((a, b) => a + b, 0) / ratings.length
+                myvenue['avg_rating'] = avg_rating
+
                 output.push(myvenue)
-                //const review_ids= await reviewModel.find({"venue_id": venue.id},{"_id": 0})
-                
-                /*
-                query.exec(function (err, ids) {
-                    if (err) return res.status(500).json(message.response("System error", {}));
-                    if(COUNT) {item=item.length};
-                    var output_obj=create_return_obj("OK",item)
-                    return res.status(200).json(output_obj)
-                });
-                */
-            
-        
-                await rate_limit_helper()
-                //reviews id list
-                //myvenue['rating']= get from database
-                
+                //await rate_limit_helper()
             }
             res.status(200).send(message.response("Ok", output));
 

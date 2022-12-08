@@ -37,7 +37,6 @@ const getItems = function(req, res, slug){
                 myvenue['name']=venue.name
                 myvenue['location']=venue.location
                 myvenue['id']=venue.id
-                //myvenue['rating']= get from database
             }
             
             output.push(myevent)
