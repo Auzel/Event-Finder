@@ -65,7 +65,7 @@ const createReview = function(req, res) {
     try {
         const bearerHeader = req.headers["authorization"];
         const bearerToken = bearerHeader.split(' ')[1]
-        console.log(bearerToke);
+        console.log(bearerToken);
         jsonwebtoken.verify(bearerToken, secrets.jwt_sign_phrase, (err, decoded) => {
             if (err) {
                 return res.status(401).json(message.response("Unauthorized", {}));
@@ -120,17 +120,23 @@ const createReview = function(req, res) {
                         aggregate.eventAttendedDate = req.bodyeventAttendedDate;
                     }
 
-                    const review = new reviewModel.user(aggregate);
-                    review.save();
+                    const review = new reviewModel.review(aggregate);
+                    review.save().then((response) => {
+                        res.status(201).send(message.response(review._id, review));
+                    }).catch((error) => {
+                        console.log("ERROR", error);
+                        res.status(500).send("Server error.", {})
+                    })
 
-                    db.collection("history").updateOne(
-                        { user_id : mongoose.Types.ObjectId(user_id)},
-                        {
-                            $push: {venuesReviewed: mongoose.Types.ObjectId(review._id)}
-                        }
-                    );
+                    // Commented out because issue occurs. possibly history doesn't exist
+                    // db.collection("history").updateOne(
+                    //     { user_id : mongoose.Types.ObjectId(user_id)},
+                    //     {
+                    //         $push: {venuesReviewed: mongoose.Types.ObjectId(review._id)}
+                    //     }
+                    // );
                     
-                    res.status(201).send(message.response(review._id, review));
+                    
                 }
             });
 
