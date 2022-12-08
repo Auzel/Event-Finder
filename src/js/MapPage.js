@@ -9,6 +9,8 @@ import { ListItemText, Rating } from '@mui/material';
 import DetailedInformationPage from './DetailedInformationPage.js';
 import { getUserId, setUserId } from './userId.js';
 import {Link} from "react-router-dom"
+import axios from 'axios';
+import { getToken } from './token.js';
 
 /**
  * Explanation of implementation:
@@ -20,16 +22,22 @@ const containerStyle = {
   height: "100%"//window.innerHeight - 48
 };
 
-const center = {
-  lat: 40.102824,
-  lng: -88.227207
-};
+const default_center = [
+  /*lat:*/ 40.102824,
+  /*lng:*/ -88.227207
+];
+
+const default_zoom = 11;
 
 export default class MapPage extends React.Component {
   // static contextType = GlobalContext;
 
   constructor(props) {
     super(props);
+
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios.defaults.headers.common['Authorization'] =
+         'Bearer ' + getToken();
     
     this.state = {
       userId: null,
@@ -45,13 +53,23 @@ export default class MapPage extends React.Component {
         "rating_avg": null
       },
       selectedVenueEvents: [],
-      selectedEvent: {}
+      selectedEvent: {},
+      mapref: null,
+      centerLoc: default_center,
+      zoomLevel: default_zoom,
+      venuesUpdateTimeoutId: null
     };
 
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.venueFilter = this.venueFilter.bind(this);
     this.listItemOnClick = this.listItemOnClick.bind(this);
     this.keydownListener = this.keydownListener.bind(this);
+    this.onMapLoad = this.onMapLoad.bind(this);
+    this.handleOnDragEnd = this.handleOnDragEnd.bind(this);
+    // this.handleOnZoomChange = this.handleOnZoomChange.bind(this);
+    // this.setTimeoutForApiUpdate = this.setTimeoutForApiUpdate.bind(this);
+    // this.timeoutResponse = this.timeoutResponse.bind(this);
+    this.updateApiVenues = this.updateApiVenues.bind(this);
   }
 
   keydownListener(e) {
@@ -70,26 +88,52 @@ export default class MapPage extends React.Component {
 
     let userId = getUserId();
     console.log("USER ID", userId);
+    // 40.102824,
+    // lng: -88.227207
+    this.axios.get(`/map?latlong=40.102824,-88.227207&radius=10000&size=50&sort=relevance,desc`, {//latlong=-88.227207,40.102824', {
+      // _id: getUserId()
+      // longitude: ,
+      // latitude: 
+    }).then(
+      (response) => {
+        console.log(response);
 
-    fetch(
-      // Get the test data
-      "http://localhost:3000/test_events.JSON"
-    ).then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        console.log("JSON", json);
-        if (!json || !json["venues"]) {
-          console.log("No json venues");
+        let data = response.data.data
+
+        if (!response) {
           return;
+        } else {
+          let venues = [];
+          
+          for (let i = 0; i < data.length; i++) {
+            let location = data[i].location;
+            venues.push({
+              id: data[i].id,
+              name: data[i].name,
+              location: [Number(location.latitude), Number(location.longitude)]
+            });
+          }
+          console.log("VENUES:", venues);
+          // "id": 54561366,
+          // "name": "Staple's Center",
+          // "location": [40.109831, -88.230371],
+          // "event_ids": [52549859, 38144578, 37443701],
+          // "review_ids": [84795708, 14119201, 83081087],
+          // "rating_avg": 3.466
+          
+          this.setState({
+            venues: venues
+          });
         }
-        this.setState({
-          venues: json["venues"]
-        });
       }
-    ).catch(
-      (error) => console.log("ERROR", error)
-    );
+      ).catch((error) => {
+        console.log("ERROR!", error);
+        this.setState({
+          errors: {
+            message: "map error"
+          }
+        });
+      })
   }
 
   componentWillUnmount() {
@@ -103,6 +147,45 @@ export default class MapPage extends React.Component {
 
   onMarkerClick(id) {
     this.setSelectedMarker(id);
+  }
+
+  updateApiVenues() {
+    let userId = getUserId();
+    console.log("USER ID", userId);
+    this.axios.get(`/map?latlong=${this.state.mapref.getCenter().lat()},${this.state.mapref.getCenter().lng()}&radius=100&size=50&sort=relevance,desc`, {
+    }).then(
+      (response) => {
+        console.log(response);
+
+        let data = response.data.data
+
+        if (!response) {
+          return;
+        } else {
+          let venues = [];
+          
+          for (let i = 0; i < data.length; i++) {
+            let location = data[i].location;
+            venues.push({
+              id: data[i].id,
+              name: data[i].name,
+              location: [Number(location.latitude), Number(location.longitude)]
+            });
+          }
+          console.log("VENUES:", venues);
+          
+          this.setState({
+            venues: venues
+          });
+        }
+    }).catch((error) => {
+      console.log("ERROR!", error);
+      this.setState({
+        errors: {
+          message: "map error"
+        }
+      });
+    })
   }
 
   updateSelectedMarkerVenueInfo() {
@@ -202,6 +285,51 @@ export default class MapPage extends React.Component {
     });
   }
 
+  onMapLoad(map) {
+    this.setState({
+      mapref: map
+    })
+  }
+
+  handleOnDragEnd() {
+    // if (this.state.mapref) {
+    //   const latlng = [this.state.mapref.getCenter().lat(), this.state.mapref.getCenter().lng()];
+    //   // this.setState({
+    //   //   centerLoc: latlng
+    //   // })
+    // }
+    // this.setTimeoutForApiUpdate();
+    this.updateApiVenues();
+  }
+
+  // timeoutResponse() {
+  //   console.log("update");
+  //   // this.setState({
+  //   //   venuesUpdateTimeoutId: null
+  //   // });
+  //   // this.updateSelectedMarkerVenueInfo();
+  // }
+
+  // setTimeoutForApiUpdate() {
+  //   if (this.state.venuesUpdateTimeoutId) {
+  //     clearTimeout(this.state.venuesUpdateTimeoutId);
+  //   }
+  //   const tempId = setTimeout(this.timeoutResponse, 1000);
+  //   // this.setState({
+  //   //   venuesUpdateTimeoutId: tempId
+  //   // });
+  // }
+
+  // handleOnZoomChange() {
+  //   if (this.state.mapref) {
+  //     console.log(this.state.mapref.getZoom());
+  //     // this.setState({
+  //     //   zoomLevel: this.state.mapref.getZoom()
+  //     // });
+  //   }
+  //   this.setTimeoutForApiUpdate();
+  // }
+
   render() {
     // console.log(this.state.selectedMarker);
     return (
@@ -211,9 +339,12 @@ export default class MapPage extends React.Component {
         <LoadScript googleMapsApiKey="AIzaSyBwrwXQZRX_inRPmoN4xzOJDZ3tHrcY7Mc">
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={center}
-            zoom={10}
+            center={{"lat": default_center[0], "lng": default_center[1]}}
+            zoom={default_zoom}
             options={{streetViewControl: false}}
+            onLoad={this.onMapLoad}
+            onDragEnd={this.handleOnDragEnd}
+            // onZoomChanged={this.handleOnZoomChange}
             // defaultOptions={{styles: mapStyles}}
             >
             {

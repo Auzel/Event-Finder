@@ -118,15 +118,20 @@ class EditAccountPage extends React.Component
    * that will be submitted to the database.
    */
   submitEditAccountForm(user) {
+    console.log("GIVEN USER", user);
     this.axios.put('/users', {
-      _id: this.state.user._id,
-      name: user.fullname,
-      username: user.username,
-      email: this.state.user.email,
-      eventPrefs: this.state.user.eventPrefs
+      // _id: this.state.user._id,
+      name: user.name,
+      username: user.usr,
+      // email: this.state.user.email,
+      // eventPrefs: this.state.user.eventPrefs
     }).then(
       (response) => {
         console.log(response);
+        // this.setState({
+        //   name: response.data.data.u
+        //   username:
+        // })
       }
     ).catch((error) => {
       console.log("ERROR!", error);
