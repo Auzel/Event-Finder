@@ -74,33 +74,23 @@ const rate_limit_helper = () =>
 
 
 const getVenueEvents = async function(venu_id) {
-    if (!verifyToken(req)) {
-        return res.status(401).json(message.response("Unauthorized", {})); 
-    }
-
     var params={}
     const api = axios.create({baseURL: "https://app.ticketmaster.com/discovery/v2/",responseType: 'json'});
     const slug='events.json'
     params['apikey']=secrets.ticket_master_api_key;
     params['venueId']=venu_id
 
-    // const res = await 
-    api.get(slug,{ params }).then(
-        (res) => {
-            var event_ids=[];
-            if (res.data){
-                console.log("RESPONSE:",res.data);
-                var events=res.data._embedded.events
-                for (var event of events){
-                    event_ids.push(event.id)
-                }
-            }
-            return event_ids;
-        }).catch(
-        (error) => {
-            console.log("ERROR", error);
-            return [];
-        });  
+
+    const res = await api.get(slug,{ params })
+  
+    var event_ids=[]
+    if (res.data){
+        var events=res.data._embedded.events
+        for (var event of events){
+            event_ids.push(event.id)
+        }
+    }
+    return event_ids;
 }
 
 
