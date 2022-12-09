@@ -86,7 +86,7 @@ const getVenueEvents = async function(venu_id) {
 
     // const res = await 
     api.get(slug,{ params }).then(
-        (response) => {
+        (res) => {
             var event_ids=[];
             if (res.data){
                 console.log("RESPONSE:",res.data);
