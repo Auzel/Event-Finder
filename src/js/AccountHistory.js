@@ -26,36 +26,59 @@ class AccountHistory extends React.Component
   }
 
   componentDidMount() {
-    fetch(
-      // Get the test data
-      // When communicating with server, attached list of event id's for selected
-      // venue as a parameter in this call.
-      "http://localhost:3000/test_events.JSON"
-    ).then(
-        (response) => response.json()
-    ).then(
-      (json) => {
-      // console.log(json);
-      if (!json || !json["reviews"]) {
-          console.log("No json reviews");
-          return;
-      }
-
-      let reviews = [];
-      const userId_string = getUserId().toString();
-      for (var i = 0; i < json["reviews"].length; i++) {
-        let obj = json["reviews"][i];
-        if (obj.user_id === userId_string) {
-          reviews.push(obj);
+    console.log("MOUNTED");
+    console.log(this.axios);
+    this.axios.get("/users", {
+      _id: getUserId()
+    }).then((res) => {
+      console.log(res);
+      if (res.data.data.reviews) {
+        var reviews_list = res.data.data.reviews;
+        var reviews_objs = [];
+        for (var i = 0; i < reviews_list.length; i++) {
+          this.axios.get(`/reviews/${reviews_list[i]}`, {
+          }).then((res) => {
+            reviews_objs.push(res.data.data);
+          }).catch((error) => {
+            console.log(error);
+          })
         }
+        console.log("all reviews:", reviews_objs);
       }
+    }).catch((error) => {
+      console.log(error);
+    })
 
-      console.log("REVIEWS:", reviews);
+    // fetch(
+    //   // Get the test data
+    //   // When communicating with server, attached list of event id's for selected
+    //   // venue as a parameter in this call.
+    //   "http://localhost:3000/test_events.JSON"
+    // ).then(
+    //     (response) => response.json()
+    // ).then(
+    //   (json) => {
+    //   // console.log(json);
+    //   if (!json || !json["reviews"]) {
+    //       console.log("No json reviews");
+    //       return;
+    //   }
 
-      this.setState({
-        reviews: reviews
-      })
-    });
+    //   let reviews = [];
+    //   const userId_string = getUserId().toString();
+    //   for (var i = 0; i < json["reviews"].length; i++) {
+    //     let obj = json["reviews"][i];
+    //     if (obj.user_id === userId_string) {
+    //       reviews.push(obj);
+    //     }
+    //   }
+
+    //   console.log("REVIEWS:", reviews);
+
+    //   this.setState({
+    //     reviews: reviews
+    //   })
+    // });
   }
 
   render ()   // Here is the start of the render().

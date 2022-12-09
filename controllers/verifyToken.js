@@ -15,7 +15,7 @@ verifyToken = function(req) {
         });
 
         return output;
-    } catch {
+    } catch (err) {
         return false;
     }
 }

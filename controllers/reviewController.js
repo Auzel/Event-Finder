@@ -178,6 +178,7 @@ const createReview = function(req, res) {
 
 const getReview = function(req, res) {
     const { id } = req.params;
+    console.log("getting with id:", id);
     var select = {}
     if (req.query.select != null) {
         select = JSON.parse(req.query.select);
