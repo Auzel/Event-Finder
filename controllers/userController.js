@@ -70,7 +70,6 @@ const getUser = async function(req, res) {
             return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs, reviews: user.reviews ? user.reviews : []}));
         }
     } catch (err) {
-        console.log(err);
         return res.status(500).json(message.response("Get User Failed", {}));
     }
 }
