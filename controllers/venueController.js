@@ -34,7 +34,7 @@ const getItems = async function(req, res, slug){
                 myvenue['id']=venue.id
                 myvenue['event_ids']=await getVenueEvents(venue.id)
                 
-                var reviews = await reviewModel.review.find({"venue_id": venue.id},{"_id": 1}) //to be changed to venue query after caching
+                var reviews = await reviewModel.review.find({"venue_id": venue.id},{"_id": 1, "rating":1}) //to be changed to venue query after caching
                 myvenue['review_ids'] = reviews.map(e=>e.id)
                 
                 var ratings=reviews.map(e=>e.rating)
