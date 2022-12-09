@@ -117,7 +117,7 @@ const EditReviewForm = ({
                 </div>
                 <div className="component submitDiv">
                     <SubmitButton variant="small" text="SUBMIT" />
-                    <Link to = "/AccountHistory" className="cancelLink"> <button className="cancelButton"> CANCEL</button> </Link>
+                    <Link to = "/AccountInformation" className="cancelLink"> <button className="cancelButton"> CANCEL</button> </Link>
                 </div>
             </form>
         </div>

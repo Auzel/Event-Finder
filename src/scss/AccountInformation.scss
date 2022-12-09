@@ -12,7 +12,8 @@
 
 .accountInformation
 {
-  width: 40vw;
+  width: max(40vw, 400px);
+  // width: 40vw;
   // border: 1px solid black; 
   margin-top: calc(100px - $navbar-height);  
 }
@@ -44,7 +45,6 @@ p {
 }
 
 .componentsFlexDiv {
-  width: 50vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -95,4 +95,8 @@ p {
 
 .progressCircle {
   margin-left: 30px;
+}
+
+.reviewsContainerDiv {
+  // border: 1px solid black;
 }

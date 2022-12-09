@@ -70,6 +70,7 @@ export default class MapPage extends React.Component {
     this.setTimeoutForApiUpdate = this.setTimeoutForApiUpdate.bind(this);
     this.timeoutResponse = this.timeoutResponse.bind(this);
     this.updateApiVenues = this.updateApiVenues.bind(this);
+    this.cycleEventIdList = this.cycleEventIdList.bind(this);
   }
 
   keydownListener(e) {
@@ -152,11 +153,17 @@ export default class MapPage extends React.Component {
     this.setSelectedMarker(id);
   }
 
+  getRadius(zl) {
+    return Math.ceil(88151*Math.exp(-0.683*zl) / 2);
+  }
+
   updateApiVenues() {
+    // console.log(Math.ceil((40000/(2^this.state.zoomLevel))*2*0.621371));
     // let center = this.state.centerLoc 
+    console.log(this.getRadius(this.state.zoomLevel));
     let userId = getUserId();
     console.log("USER ID", userId);
-    this.axios.get(`/map?latlong=${this.state.centerLoc[0]},${this.state.centerLoc[1]}&radius=100&size=50&sort=relevance,desc`, {
+    this.axios.get(`/map?latlong=${this.state.centerLoc[0]},${this.state.centerLoc[1]}&radius=${Math.min(this.getRadius(this.state.zoomLevel), 1000)}&size=50&sort=relevance,desc`, {
     }).then(
       (response) => {
         console.log(response);
@@ -192,37 +199,94 @@ export default class MapPage extends React.Component {
     })
   }
 
+  cycleEventIdList(list, index) {
+    if (index >= list.length) return;
+    console.log("Trying index ", index);
+    this.axios.get(`/events/${list[index]}`, {}).then((res) => {
+      console.log(res.data.data);
+    }).catch((error) => {
+      console.log("ERROR getting event id", list[index], error);
+    });
+
+    // if (index < list.length - 1) {
+    setTimeout(this.cycleEventIdList(list, index+1), 1000);
+    // }
+  }
+
   updateSelectedMarkerVenueInfo() {
     // Dedicated method for markerclick so we can call axios and load the venue
     // in the background while infowindow is being created
 
     let userId = getUserId();
     // console.log("USER ID", userId);
-    this.axios.get(`/venues?id=${this.state.selectedMarker}`, {
+    console.log("GETTING EVENTS");
+    this.axios.get(`/venues/${this.state.selectedMarker}`, {
     }).then(
       (response) => {
         console.log(response);
+        const event_ids = response.data.data[0].event_ids;
 
-        let data = response.data.data
-
-        if (!response) {
-          return;
-        } else {
-          let venues = [];
-          for (let i = 0; i < data.length; i++) {
-            let location = data[i].location;
-            venues.push({
-              id: data[i].id,
-              name: data[i].name,
-              location: [Number(location.latitude), Number(location.longitude)]
-            });
-          }
-          console.log("VENUES:", venues);
-          
-          this.setState({
-            venues: venues
-          });
+        console.log("EVENT IDS",event_ids);
+        // setTimeout(this.cycleEventIdList(event_ids, 0), 250);
+        let param_string = "";
+        for (var i = 0; i < event_ids.length; i++) {
+          param_string += `${event_ids[i]},`;
         }
+        console.log(param_string.substring(0, param_string.length - 1));
+        this.axios.get(`/events?id=${param_string}`, {}).then(
+          (res) => {
+            console.log(res);
+            let event_info = res.data.data; //array
+
+            // let selectedVenueEvents = [];
+
+            // for (var i = 0; i < json["events"].length; i++) {
+            //   let obj = json["events"][i];
+            //   // console.log(i);
+            //   if (obj.venue_id === this.state.selectedMarker) {
+            //     let temp = {};
+            //     temp.id = obj.id;
+            //     temp.title = obj.title;
+            //     temp.venue_id = obj.venue_id;
+            //     temp.date = obj.date;
+            //     temp.image = obj.image;
+            //     temp.description = obj.description;
+
+            //     selectedVenueEvents.push(temp);
+            //   }
+            // }
+
+            // console.log("VENUE INFO", selectedVenueInfo);
+            // console.log("VENUE EVENTS", selectedVenueEvents);
+            this.setState({
+              // selectedVenueInfo: selectedVenueInfo,
+              selectedVenueEvents: event_info
+            })
+          }
+        ).catch((error) => {
+          console.log("ERROR", error);
+        });
+
+        // let data = response.data.data
+
+        // if (!response) {
+        //   return;
+        // } else {
+        //   // let venue = [];
+        //   // for (let i = 0; i < data.length; i++) {
+        //   //   let location = data[i].location;
+        //   //   venues.push({
+        //   //     id: data[i].id,
+        //   //     name: data[i].name,
+        //   //     location: [Number(location.latitude), Number(location.longitude)]
+        //   //   });
+        //   // }
+        //   console.log("VENUE:", data);
+          
+        //   this.setState({
+        //     venues: venues
+        //   });
+        // }
     }).catch((error) => {
       console.log("ERROR!", error);
       this.setState({
@@ -315,7 +379,7 @@ export default class MapPage extends React.Component {
     this.setState({
       selectedMarker: id,
       selectedEvent: {}
-    })//, () => {return this.updateSelectedMarkerVenueInfo()})
+    }, () => {return this.updateSelectedMarkerVenueInfo()})
   }
 
   listItemOnClick(id) {
@@ -340,30 +404,30 @@ export default class MapPage extends React.Component {
       })
     }
     this.setTimeoutForApiUpdate();
-    // this.updateApiVenues();
   }
 
   timeoutResponse() {
     console.log("update");
-    // this.setState({
-    //   venuesUpdateTimeoutId: null
-    // });
+    this.setState({
+      venuesUpdateTimeoutId: null
+    });
     this.updateApiVenues();
-    // this.updateSelectedMarkerVenueInfo();
   }
 
   setTimeoutForApiUpdate() {
+    console.log("setting timeout");
     if (this.state.venuesUpdateTimeoutId) {
       clearTimeout(this.state.venuesUpdateTimeoutId);
     }
-    const tempId = setTimeout(this.timeoutResponse, 1800);
-    // this.setState({
-    //   venuesUpdateTimeoutId: tempId
-    // });
+    const tempId = setTimeout(this.timeoutResponse, 1300);
+    this.setState({
+      venuesUpdateTimeoutId: tempId
+    });
   }
 
   handleOnZoomChange() {
     if (this.state.mapref) {
+      console.log(this.state.mapref.getZoom());
       this.setState({
         zoomLevel: this.state.mapref.getZoom()
       });
@@ -386,7 +450,7 @@ export default class MapPage extends React.Component {
             options={{streetViewControl: false}}
             onLoad={this.onMapLoad}
             onDragEnd={this.handleOnDragEnd}
-            // onZoomChanged={this.handleOnZoomChange}
+            onZoomChanged={this.handleOnZoomChange}
             // defaultOptions={{styles: mapStyles}}
             >
             {
