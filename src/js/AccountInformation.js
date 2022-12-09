@@ -10,7 +10,8 @@ import { getUserId } from './userId.js';
 import { TextField } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import { ThirtyFpsSelect } from '@mui/icons-material';
-import axiosRetry from 'axios-retry';
+import ReviewCard from './ReviewCard.js';
+// import axiosRetry from 'axios-retry';
 // import getUserI
 
 // Here we are creating a react class called App.
@@ -23,24 +24,21 @@ class AccountInformation extends React.Component
     this.axios.defaults.headers.common['Authorization'] =    
          'Bearer ' + getToken();
 
-    this.axiosRetry = axiosRetry(this.axios, {retries: 3});
+    this.axios.interceptors.response.use(null, (error) => {
+      // Intercept an error related to the server not accepting connection and rerun
+      if (error.config && !error.response && error.code === "ERR_NETWORK") {
+        console.log(`server connection error, repeating request`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+      // It wasn't a server error, so reject like normal
+      return Promise.reject(error);
+    })
     
-    // Retry request when the response is "connection refused"
-    // this.axios.interceptors.response.use(null, (error) => {
-    //   if (error.config && !error.response && error.code === "ERR_NETWORK") {
-    //     // return this.axios.request(error.config);
-    //     // console.log(error.config.retry);
-    //     // error.config.retry();
-    //     return this.axios.request(error.config);
-    //     // return updateToken().then((token) => {
-    //       // error.config.headers.xxxx <= set the token
-    //       // return axios.request(config);
-    //     // });
-    //     // this.axios.request(error.request.config);
-    //   }
-    //   return Promise.reject(error);
-    // });
-
     this.state = {
       user: {
         name: "",
@@ -116,22 +114,6 @@ class AccountInformation extends React.Component
         <NavBar variant="account" logoLink="/" />
 
         <div className="all">
-        {/* <div className="sideBar">
-
-          <div className="informationDiv">
-
-            <Link to = "/AccountInformation" className = "AccountInformationLink"> Information </Link>
-
-          </div>
-
-          <div className="HistoryDiv">
-
-            <Link to = "/AccountHistory" className = "AccountHistoryLink"> History </Link>
-
-          </div>
-
-        </div> */}
-
           <div className="accountInformation">
             <h1> ACCOUNT INFORMATION </h1>
             {
@@ -168,10 +150,12 @@ class AccountInformation extends React.Component
               {
                 this.state.review_objs.length > 0 ?
                 this.state.review_objs.map((review) => {
-                  return( <p>review</p>)
+                  return(
+                    <ReviewCard review={review} user={this.state.user}/>
+                  );
                 })
                 :
-                <p>No</p>
+                <div className='progressCircle'><CircularProgress /></div>
               }
             </div>
     
@@ -182,4 +166,4 @@ class AccountInformation extends React.Component
   }
 }
 
-export default AccountInformation;   // Here we are exporting the class called Gallery.
+export default AccountInformation;

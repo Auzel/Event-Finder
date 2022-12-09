@@ -1,0 +1,49 @@
+@import "./styles.scss";
+
+.mainDiv {
+    width: 100%;
+    height: auto;
+    background-color: white;
+    // border: 1px solid black;
+    box-shadow: 0px 0px 2px  gray;
+    margin: 16px;
+}
+
+.componentDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.ratingDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.MuiRating-sizeSmall {
+    // color: pink;
+    // font-size: 1rem !important;
+    // stroke: pink !important;
+}
+
+.reviewUsername {
+    font-weight: 300;
+    font-size: 16px;
+    margin-left: 10px;
+    // p {
+    //     text-decoration: none;
+    // }
+}
+
+.linkComponent {
+    text-decoration: none;
+    color: black;
+}
+
+.description  {
+    font-weight: 300;
+    margin-top: 5px;
+}
