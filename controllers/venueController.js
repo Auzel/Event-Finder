@@ -3,10 +3,15 @@ var secrets = require('../config/secrets');
 var mongoose = require('mongoose');
 var axios =require('axios');
 var message = require('../models/message');
-var reviewModel = require("../models/review")
+var reviewModel = require("../models/review");
+var {verifyToken} = require("./verifyToken");
 
 
 const getItems = async function(req, res, slug){
+    if (!verifyToken(req)) {
+        return res.status(401).json(message.response("Unauthorized", {})); 
+    }
+
     var params= req.query;
     const api = axios.create({baseURL: "https://app.ticketmaster.com/discovery/v2/",responseType: 'json'});
     params['apikey']=secrets.ticket_master_api_key;
@@ -69,6 +74,10 @@ const rate_limit_helper = () =>
 
 
 const getVenueEvents = async function(venu_id) {
+    if (!verifyToken(req)) {
+        return res.status(401).json(message.response("Unauthorized", {})); 
+    }
+
     var params={}
     const api = axios.create({baseURL: "https://app.ticketmaster.com/discovery/v2/",responseType: 'json'});
     const slug='events.json'
