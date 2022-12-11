@@ -24,7 +24,6 @@ const getReviewList = function(req, res) {
         }
         query.push({$limit: limit});
         
-        console.log(req.query.venue_id)
         if (req.query.venue_id) {
             query.push({$match: {venue_id: req.query.venue_id}});
         }
@@ -113,24 +112,20 @@ const createReview = function(req, res) {
             }
 
             const finalReview = new reviewModel.review(aggregate);
-            console.log(finalReview);
 
             finalReview.save().then((response) => {
-                console.log("Made it here");
                 db.collection("users").updateOne(
                     { _id : mongoose.Types.ObjectId(user_id)},
                     {
                         $push: {reviews: finalReview._id}
                     }
                 ).then((response) => {
-                    console.log("Made it here2");
 
                     var update_json = {};
                     user = db.collection("venues").findOne(
                         { venue_id: venue_id }
                     )
                     .then((venue) => {
-                        console.log(venue);
                         if (venue) {
                             db.collection("venues").updateOne(
                                 { venue_id : venue_id},
@@ -141,7 +136,6 @@ const createReview = function(req, res) {
                             )
                         }
                         else {
-                            console.log("Made it here");
                             db.collection("venues").insertOne(
                                 {
                                     venue_id: venue_id,
@@ -152,17 +146,14 @@ const createReview = function(req, res) {
                             )
                         }
 
-                        console.log("worked")
                         res.status(201).send(message.response(finalReview._id, finalReview));
                     
                     });
                     
                 }).catch(() => {
-                    console.log("unable to add to reviews array in users");
                     res.status(500).send(message.response(finalReview._id, {}));
                 })
             }).catch((error) => {
-                console.log("error");
                 res.status(500).send(message.response(finalReview._id, {}));
             });
                    
@@ -178,7 +169,6 @@ const createReview = function(req, res) {
 
 const getReview = function(req, res) {
     const { id } = req.params;
-    console.log("getting with id:", id);
     var select = {}
     if (req.query.select != null) {
         select = JSON.parse(req.query.select);
@@ -324,18 +314,15 @@ const deleteReview = function(req, res) {
                             }).catch(()=> {console.log("failed to delete review from venues table")});
 
                         }).catch(() => {
-                            console.log("unable to delete review from review table");
                             res.status(500).send(message.response(id, {}));
                         });
                         
                     }).catch(() => {
-                        console.log("unable to delete review from users table");
                         res.status(500).send(message.response(id, {}));
                     });
     
                 }
                 else {
-                    console.log("review not found");
                     res.status(404).send(message.response(id, "review not found"));
                 }
             });
