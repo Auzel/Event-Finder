@@ -12,33 +12,33 @@ class LandingPage extends React.Component
   {
     return (
         <div>
-
-          <NavBar variant="blank" logoLink="/" />
-
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-
-          <div className="buttonContainerDiv">
-
-            <div className="buttonContainerDivOne">
-
-              <img src={Eventology} className='buttonContainerDivImage' alt="HI"/>
-
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-
-              <div className="links">
-                <NavButton className="LoginPageLink" to={'/LoginPage'} text="LOGIN" variant="large"/>
-                <NavButton className="SignupPageLink" to={'/SignupPage'} text="SIGN UP" variant="large"/>
+          <div id="mainLandingDiv">
+            <div className='headerLanding'>
+              <NavBar variant="blank" logoLink="/" />
+            </div>
+            <div className="buttonContainerDiv">
+              <div className="buttonContainerDivOne">
+                <div className='mainLogoLandingDiv'>
+                  <img src={Eventology} className='buttonContainerDivImage' alt="HI"/>
+                </div>
+                <div className="links">
+                  <NavButton className="LoginPageLink" to={'/LoginPage'} text="LOGIN" variant="large"/>
+                  <NavButton className="SignupPageLink" to={'/SignupPage'} text="SIGN UP" variant="large"/>
+                </div>
               </div>
+              <div className='sideImgDiv'>
+                {/* <img src="https://www.pngall.com/wp-content/uploads/4/Concert-Crowd-PNG-Image.png"></img> */}
+                <div id="landingH1">A Centeralized Map Explorer for Event Websites like Ticketmaster</div>
+              </div>
+            </div>
+            <div className="footer">
+
+                <p>Copyright @2022</p>
 
             </div>
-
-            <div className="styleDivOne">
+          </div>
+        </div>
+            /* <div className="styleDivOne">
 
             </div>
 
@@ -92,13 +92,9 @@ class LandingPage extends React.Component
 
           </div>
 
-          <div className="footer">
+          
 
-            <p>Copy Right @2022</p>
-
-          </div>
-
-        </div>
+        </div> */
     );
   }
 }

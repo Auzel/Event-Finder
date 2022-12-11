@@ -31,10 +31,35 @@ class EditAccountPage extends React.Component
   constructor(props) {
     super(props);
 
-    // Get the user information from url query props
     this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
-    this.axios.defaults.headers.common['Authorization'] =    
+    this.axios.defaults.headers.common['Authorization'] =
          'Bearer ' + getToken();
+
+    this.axios.interceptors.response.use(null, (error) => {
+    // Intercept an error related to the server not accepting connection and rerun
+
+      if (error.config && !error.response && error.code === "ERR_NETWORK") {
+        console.log(`server connection error, repeating request`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+
+      if (error.response && error.response.data && error.response.data.data && error.response.data.data === "Request failed with status code 429") {
+        console.log(`server rate limiting`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+      // It wasn't a server error, so reject like normal
+      return Promise.reject(error);
+    })
 
     const queryParameters = new URLSearchParams(window.location.search)
     const user = JSON.parse(queryParameters.get("user"));
@@ -132,6 +157,7 @@ class EditAccountPage extends React.Component
         //   name: response.data.data.u
         //   username:
         // })
+        window.location = "http://localhost:3000/accountinformation";
       }
     ).catch((error) => {
       console.log("ERROR!", error);
