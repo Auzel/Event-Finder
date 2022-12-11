@@ -85,13 +85,20 @@ const replaceUser = async function(req, res) {
         if (!verifyToken(req)) {
             return res.status(401).json(message.response("Unauthorized", {})); 
         }
+        
+        let old_user = await User.findById(req.body._id).exec();
+        if (!old_user) {
+            return res.status(404).json(message.response("User Not Found", {}));
+        }
+
+        req.body.reviews = old_user.reviews;
 
         let new_user = new User(req.body);
         let user = await User.findByIdAndUpdate(new_user._id, new_user, {new: true}).exec();
         if (!user) {
             return res.status(404).json(message.response("User Not Found", {}));
         } else {
-            return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs}));
+            return res.status(200).json(message.response("OK", {_id: user._id, name: user.name, username: user.username, email: user.email, eventPrefs: user.eventPrefs, reviews: user.reviews ? user.reviews : []}));
         }
 
     } catch (err) {

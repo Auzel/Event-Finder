@@ -147,7 +147,7 @@ class EditAccountPage extends React.Component
     this.axios.put('/users', {
       // _id: this.state.user._id,
       name: user.name,
-      username: user.usr,
+      username: user.usr
       // email: this.state.user.email,
       // eventPrefs: this.state.user.eventPrefs
     }).then(
