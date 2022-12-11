@@ -97,6 +97,17 @@ const getVenueEvents = async function(venu_id) {
 
 
 
+    const res = await api.get(slug,{ params })
+  
+    var event_ids=[]
+    if (res.data && res.data._embedded && res.data._embedded.events){
+        var events=res.data._embedded.events
+        for (var event of events){
+            event_ids.push(event.id)
+        }
+    }
+    return event_ids;
+}
 
 exports.getVenueList = getVenueList;
 exports.getVenue = getVenue;

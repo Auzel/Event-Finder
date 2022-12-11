@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow, MarkerF, InfoWindowF } from '@react-google-maps/api';
+import React from 'react';
+import { GoogleMap, LoadScript, MarkerF, InfoWindowF, Marker } from '@react-google-maps/api';
 import NavBar from "./NavBar.js"
 import "../scss/MapPage.scss"
 import { List, ListItemButton } from '@mui/material';
@@ -11,15 +11,12 @@ import { getUserId, setUserId } from './userId.js';
 import {Link} from "react-router-dom"
 import axios from 'axios';
 import { getToken } from './token.js';
-
-/**
- * Explanation of implementation:
- * https://github.com/leighhalliday/google-maps-react-demo/tree/master/src
- */
+import dayjs from 'dayjs';
+import { ArrowRight, ContentCutOutlined } from '@mui/icons-material';
 
 const containerStyle = {
-  width: "100%",//window.innerWidth,
-  height: "100%"//window.innerHeight - 48
+  width: "100%",
+  height: "100%"
 };
 
 const default_center = [
@@ -30,14 +27,38 @@ const default_center = [
 const default_zoom = 11;
 
 export default class MapPage extends React.Component {
-  // static contextType = GlobalContext;
-
   constructor(props) {
     super(props);
 
     this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
     this.axios.defaults.headers.common['Authorization'] =
          'Bearer ' + getToken();
+
+    this.axios.interceptors.response.use(null, (error) => {
+    // Intercept an error related to the server not accepting connection and rerun
+
+      if (error.config && !error.response && error.code === "ERR_NETWORK") {
+        console.log(`server connection error, repeating request`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+
+      if (error.response && error.response.data && error.response.data.data && error.response.data.data === "Request failed with status code 429") {
+        console.log(`server rate limiting`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+      // It wasn't a server error, so reject like normal
+      return Promise.reject(error);
+    })
     
     this.state = {
       userId: null,
@@ -52,6 +73,7 @@ export default class MapPage extends React.Component {
         "review_ids": [],
         "rating_avg": null
       },
+      loadingData: false,
       selectedVenueEvents: [],
       selectedEvent: {},
       mapref: null,
@@ -60,17 +82,17 @@ export default class MapPage extends React.Component {
       venuesUpdateTimeoutId: null
     };
 
+    this.center = default_center;
+
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.venueFilter = this.venueFilter.bind(this);
     this.listItemOnClick = this.listItemOnClick.bind(this);
     this.keydownListener = this.keydownListener.bind(this);
     this.onMapLoad = this.onMapLoad.bind(this);
-    this.handleOnDragEnd = this.handleOnDragEnd.bind(this);
     this.handleOnZoomChange = this.handleOnZoomChange.bind(this);
-    this.setTimeoutForApiUpdate = this.setTimeoutForApiUpdate.bind(this);
-    this.timeoutResponse = this.timeoutResponse.bind(this);
     this.updateApiVenues = this.updateApiVenues.bind(this);
-    this.cycleEventIdList = this.cycleEventIdList.bind(this);
+    this.onCenterChanged = this.onCenterChanged.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
   }
 
   keydownListener(e) {
@@ -86,57 +108,7 @@ export default class MapPage extends React.Component {
 
   componentDidMount() {
     document.addEventListener("keydown", this.keydownListener, false);
-
     this.updateApiVenues();
-
-    // let userId = getUserId();
-    // console.log("USER ID", userId);
-    // // 40.102824,
-    // // lng: -88.227207
-    // this.axios.get(`/map?latlong=40.102824,-88.227207&radius=10000&size=50&sort=relevance,desc`, {//latlong=-88.227207,40.102824', {
-    //   // _id: getUserId()
-    //   // longitude: ,
-    //   // latitude: 
-    // }).then(
-    //   (response) => {
-    //     console.log(response);
-
-    //     let data = response.data.data
-
-    //     if (!response) {
-    //       return;
-    //     } else {
-    //       let venues = [];
-          
-    //       for (let i = 0; i < data.length; i++) {
-    //         let location = data[i].location;
-    //         venues.push({
-    //           id: data[i].id,
-    //           name: data[i].name,
-    //           location: [Number(location.latitude), Number(location.longitude)]
-    //         });
-    //       }
-    //       console.log("VENUES:", venues);
-    //       // "id": 54561366,
-    //       // "name": "Staple's Center",
-    //       // "location": [40.109831, -88.230371],
-    //       // "event_ids": [52549859, 38144578, 37443701],
-    //       // "review_ids": [84795708, 14119201, 83081087],
-    //       // "rating_avg": 3.466
-          
-    //       this.setState({
-    //         venues: venues
-    //       });
-    //     }
-    //   }
-    //   ).catch((error) => {
-    //     console.log("ERROR!", error);
-    //     this.setState({
-    //       errors: {
-    //         message: "map error"
-    //       }
-    //     });
-    //   })
   }
 
   componentWillUnmount() {
@@ -149,7 +121,7 @@ export default class MapPage extends React.Component {
   }
 
   onMarkerClick(id) {
-    // console.log("CLICKED ID:", id);
+    // console.log("marked click");
     this.setSelectedMarker(id);
   }
 
@@ -158,16 +130,16 @@ export default class MapPage extends React.Component {
   }
 
   updateApiVenues() {
-    // console.log(Math.ceil((40000/(2^this.state.zoomLevel))*2*0.621371));
-    // let center = this.state.centerLoc 
     console.log(this.getRadius(this.state.zoomLevel));
     let userId = getUserId();
     console.log("USER ID", userId);
-    this.axios.get(`/map?latlong=${this.state.centerLoc[0]},${this.state.centerLoc[1]}&radius=${Math.min(this.getRadius(this.state.zoomLevel), 1000)}&size=50&sort=relevance,desc`, {
+    this.setState({loadingData: true, selectedEvent: {}, selectedVenueEvents: [], selectedMarker: null});
+    this.axios.get(`/map?latlong=${this.center[0]},${this.center[1]}&radius=${Math.min(this.getRadius(this.state.zoomLevel), 1000)}&size=50&sort=relevance,desc`, {
     }).then(
       (response) => {
+        this.setState({loadingData: false});
         console.log(response);
-
+        
         let data = response.data.data
 
         if (!response) {
@@ -184,6 +156,11 @@ export default class MapPage extends React.Component {
             });
           }
           console.log("VENUES:", venues);
+
+          if (this.state.venues === venues) {
+            console.log("List equal!");
+            return;
+          }
           
           this.setState({
             venues: venues
@@ -194,180 +171,79 @@ export default class MapPage extends React.Component {
       this.setState({
         errors: {
           message: "map error"
-        }
+        },
+        loadingData: true
       });
     })
-  }
-
-  cycleEventIdList(list, index) {
-    if (index >= list.length) return;
-    console.log("Trying index ", index);
-    this.axios.get(`/events/${list[index]}`, {}).then((res) => {
-      console.log(res.data.data);
-    }).catch((error) => {
-      console.log("ERROR getting event id", list[index], error);
-    });
-
-    // if (index < list.length - 1) {
-    setTimeout(this.cycleEventIdList(list, index+1), 1000);
-    // }
   }
 
   updateSelectedMarkerVenueInfo() {
     // Dedicated method for markerclick so we can call axios and load the venue
     // in the background while infowindow is being created
-
+    if (!this.state.selectedMarker) return;
     let userId = getUserId();
     // console.log("USER ID", userId);
     console.log("GETTING EVENTS");
+    this.setState({loadingData: true});
     this.axios.get(`/venues/${this.state.selectedMarker}`, {
     }).then(
       (response) => {
-        console.log(response);
+        this.setState({loadingData: false});
+        console.log("BASE RESPONSE",response);
         const event_ids = response.data.data[0].event_ids;
+        if (event_ids.length <= 0) {
+          this.setState({
+            selectedVenueEvents: []
+          })
+          return;
+        }
 
-        console.log("EVENT IDS",event_ids);
-        // setTimeout(this.cycleEventIdList(event_ids, 0), 250);
+        // console.log("EVENT IDS",event_ids);
+
         let param_string = "";
         for (var i = 0; i < event_ids.length; i++) {
           param_string += `${event_ids[i]},`;
         }
-        console.log(param_string.substring(0, param_string.length - 1));
+        
+        // console.log(param_string.substring(0, param_string.length - 1));
+        this.setState({loadingData: true});
         this.axios.get(`/events?id=${param_string}`, {}).then(
           (res) => {
-            console.log(res);
-            let event_info = res.data.data; //array
-
-            // let selectedVenueEvents = [];
-
-            // for (var i = 0; i < json["events"].length; i++) {
-            //   let obj = json["events"][i];
-            //   // console.log(i);
-            //   if (obj.venue_id === this.state.selectedMarker) {
-            //     let temp = {};
-            //     temp.id = obj.id;
-            //     temp.title = obj.title;
-            //     temp.venue_id = obj.venue_id;
-            //     temp.date = obj.date;
-            //     temp.image = obj.image;
-            //     temp.description = obj.description;
-
-            //     selectedVenueEvents.push(temp);
-            //   }
-            // }
-
-            // console.log("VENUE INFO", selectedVenueInfo);
-            // console.log("VENUE EVENTS", selectedVenueEvents);
+            this.setState({loadingData: false});
+            let event_info = res.data.data;
+            for (let i = 0; i < event_info.length; i++) {
+              const arr = event_info[i].datetime.split(/-|\s|:/);
+              const r_date = dayjs(new Date(arr[0], arr[1] -1, arr[2], arr[3], arr[4], arr[5]));
+              event_info[i].datetime = r_date;//.format("ddd MMM D YYYY [@] h:mm a [GMT]Z");
+            }
+            let sorted = event_info.sort((a, b) => (a.datetime.isAfter(b.datetime) ? 1 : -1));
+            // console.log("SORTED", sorted);
+            // console.log(res);
+            // let event_info = res.data.data;
+            // let formatted_event_info = event_info.map((event) => {
+            //   console.log(event);
+              
+            //   // // formatted_event_info
+            //   // event.datetime = r_date;
+            //   // return event;
+            // });
             this.setState({
-              // selectedVenueInfo: selectedVenueInfo,
-              selectedVenueEvents: event_info
+              selectedVenueEvents: sorted
             })
           }
         ).catch((error) => {
           console.log("ERROR", error);
+          this.setState({loadingData: false});
         });
-
-        // let data = response.data.data
-
-        // if (!response) {
-        //   return;
-        // } else {
-        //   // let venue = [];
-        //   // for (let i = 0; i < data.length; i++) {
-        //   //   let location = data[i].location;
-        //   //   venues.push({
-        //   //     id: data[i].id,
-        //   //     name: data[i].name,
-        //   //     location: [Number(location.latitude), Number(location.longitude)]
-        //   //   });
-        //   // }
-        //   console.log("VENUE:", data);
-          
-        //   this.setState({
-        //     venues: venues
-        //   });
-        // }
     }).catch((error) => {
       console.log("ERROR!", error);
       this.setState({
         errors: {
           message: "map error"
-        }
+        },
+        loadingData: false
       });
     })
-
-    // fetch(
-    //   // Get the test data
-    //   // When communicating with server, attached list of event id's for selected
-    //   // venue as a parameter in this call.
-    //   "http://localhost:3000/test_events.JSON"
-    // ).then(
-    //   (response) => response.json()
-    // ).then(
-    //   (json) => {
-    //     // console.log(json);
-    //     if (!json || !json["events"]) {
-    //       console.log("No json events");
-    //       return;
-    //     }
-
-    //     // Get info for venue
-    //     let selectedVenueInfo = {};
-    //     try {
-    //       for (var i = 0; i < json["venues"].length; i++) {
-    //         let obj = json["venues"][i];
-    //         if (obj.id === this.state.selectedMarker) {
-    //           let temp = {};
-    //           temp.id = obj.id;
-    //           temp.name = obj.name;
-    //           temp.location = obj.location;
-    //           temp.event_ids = obj.events_ids;
-    //           temp.review_ids = obj.review_ids;
-    //           temp.rating_avg = obj.rating_avg;
-
-    //           selectedVenueInfo = temp;
-    //         }
-    //       }
-    //     } catch (error) {
-    //       console.log("error getting venue info", error);
-    //     }
-
-
-    //     // Get events for venue
-
-    //     // Cycle through the event id's attached to the selected venue marker
-    //     // and add the data for each event in the state variable.
-    //     let selectedVenueEvents = [];
-    //     try {
-    //       for (var i = 0; i < json["events"].length; i++) {
-    //         let obj = json["events"][i];
-    //         // console.log(i);
-    //         if (obj.venue_id === this.state.selectedMarker) {
-    //           let temp = {};
-    //           temp.id = obj.id;
-    //           temp.title = obj.title;
-    //           temp.venue_id = obj.venue_id;
-    //           temp.date = obj.date;
-    //           temp.image = obj.image;
-    //           temp.description = obj.description;
-
-    //           selectedVenueEvents.push(temp);
-    //         }
-    //       }
-    //     } catch (error) {
-    //       console.log("error getting events", error);
-    //     }
-
-    //     // console.log("VENUE INFO", selectedVenueInfo);
-    //     // console.log("VENUE EVENTS", selectedVenueEvents);
-    //     this.setState({
-    //       selectedVenueInfo: selectedVenueInfo,
-    //       selectedVenueEvents: selectedVenueEvents
-    //     })
-    //   }
-    // ).catch(
-    //   (error) => console.log(error)
-    // );
   }
 
   /**
@@ -376,10 +252,12 @@ export default class MapPage extends React.Component {
    * @param {*} id 
    */
   setSelectedMarker(id) {
+    console.log("set selected marker");
     this.setState({
       selectedMarker: id,
-      selectedEvent: {}
-    }, () => {return this.updateSelectedMarkerVenueInfo()})
+      selectedEvent: {},
+      selectedVenueEvents: []
+    }, () => {console.log("Callback"); return this.updateSelectedMarkerVenueInfo()})
   }
 
   listItemOnClick(id) {
@@ -390,67 +268,79 @@ export default class MapPage extends React.Component {
     });
   }
 
+  createCenterControl(map) {
+    const controlButton = document.createElement("button");
+
+    controlButton.className = "controlButton";  
+    controlButton.textContent = "Search Here";
+    controlButton.title = "Click to reload venue search results";
+    controlButton.type = "button";
+
+    // Setup the click event listeners: simply set the map to Chicago.
+    controlButton.addEventListener("click", () => {
+      this.updateApiVenues();
+    });
+  
+    return controlButton;
+  }
+
   onMapLoad(map) {
     this.setState({
       mapref: map
     })
-  }
-
-  handleOnDragEnd() {
-    if (this.state.mapref) {
-      const latlng = [this.state.mapref.getCenter().lat(), this.state.mapref.getCenter().lng()];
-      this.setState({
-        centerLoc: latlng
-      })
-    }
-    this.setTimeoutForApiUpdate();
-  }
-
-  timeoutResponse() {
-    console.log("update");
-    this.setState({
-      venuesUpdateTimeoutId: null
-    });
-    this.updateApiVenues();
-  }
-
-  setTimeoutForApiUpdate() {
-    console.log("setting timeout");
-    if (this.state.venuesUpdateTimeoutId) {
-      clearTimeout(this.state.venuesUpdateTimeoutId);
-    }
-    const tempId = setTimeout(this.timeoutResponse, 1300);
-    this.setState({
-      venuesUpdateTimeoutId: tempId
-    });
+    // Create the DIV to hold the control.
+    const centerControlDiv = document.createElement("div");
+    // Create the control.
+    const centerControl = this.createCenterControl(map);
+    // Append the control to the DIV.
+    centerControlDiv.appendChild(centerControl);
+    map.controls[window.google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
   }
 
   handleOnZoomChange() {
     if (this.state.mapref) {
       console.log(this.state.mapref.getZoom());
       this.setState({
-        zoomLevel: this.state.mapref.getZoom()
+        zoomLevel: this.state.mapref.getZoom(),
+        selectedEvent: {},
+        selectedMarker: null,
+        selectedVenueEvents: []
       });
     }
-    this.setTimeoutForApiUpdate();
+  }
+
+  onCenterChanged() {
+    // console.log("CENTER CHANGED");
+    if (this.state.mapref) {
+      const latlng = [this.state.mapref.getCenter().lat(), this.state.mapref.getCenter().lng()];
+      this.center = latlng;
+    }
+  }
+
+  componentDidUpdate() {
+
   }
 
   render() {
-    console.log(this.state.selectedMarker);
+    // console.log("selected marker:", this.state.selectedMarker);
+    // console.log("venues:", this.state.venues);
+
     return (
       <div>
-        <NavBar variant="map"></NavBar>
+        <NavBar variant="map" loadingIcon={this.state.loadingData}></NavBar>
+        <div className='mapAndButton'>
+        
         <div className='mapContainerDiv'>
         <LoadScript googleMapsApiKey="AIzaSyBwrwXQZRX_inRPmoN4xzOJDZ3tHrcY7Mc">
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={{"lat": this.state.centerLoc[0], "lng": this.state.centerLoc[1]}}
-            // center={{"lat": default_center[0], "lng": default_center[1]}}
+            center={{lat: this.center[0], lng: this.center[1]}}
             zoom={default_zoom}
-            options={{streetViewControl: false}}
+            options={{streetViewControl: false, scrollwheel: false}}
             onLoad={this.onMapLoad}
-            onDragEnd={this.handleOnDragEnd}
+            onCenterChanged={this.onCenterChanged}
             onZoomChanged={this.handleOnZoomChange}
+            
             // defaultOptions={{styles: mapStyles}}
             >
             {
@@ -460,44 +350,76 @@ export default class MapPage extends React.Component {
               this.state.venues ? this.state.venues.map(
                 (marker) => {
                   try {
+                    // console.log("marker:", marker);
                     return (
                       <div>
-                        <MarkerF
+                        <Marker
                           title={marker.title}
                           // label={String(this.id)}
                           key={marker.id}
                           position={{lat: marker.location[0], lng: marker.location[1]}}
-                          onClick={() => {this.onMarkerClick(marker.id)}} >
+                          onClick={() => {console.log(marker.id);this.onMarkerClick(marker.id)}} >
+                        </Marker>
                         {
                           this.state.selectedMarker === marker.id ? (
-                            <InfoWindowF onCloseClick={() => this.setSelectedMarker(null)}>
+                            <InfoWindowF 
+                              position={{lat: marker.location[0], lng: marker.location[1]}} 
+                              onCloseClick={() => this.setSelectedMarker(null)}
+                              options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
+                            >
                               <div className='eventPopUp'>
-                                <h2 className="venueTitle">{marker.name}</h2>
-                                <Link to={"/AddReviewPage?venue_info=" + JSON.stringify({id:this.state.selectedMarker})/*JSON.stringify(this.state.selectedVenueInfo)*/}>Add Review</Link>
-                                <Rating readOnly precision={0.5} value={this.state.selectedVenueInfo.rating_avg}></Rating>
-                                {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}> */}
-                                  <List style={{maxHeight: "300px", overflow: "auto"}}>
-                                  {
-                                    this.state.selectedVenueEvents ? this.state.selectedVenueEvents.map(
-                                      (event) => {
-                                        // console.log("EVENT", event);
-                                        return (
-                                          <ListItem key={event.id} >
-                                            <ListItemButton onClick={() => {this.listItemOnClick(event.id)}}>
-                                              <img src={GreyBox} className='greyBoxImage' alt="GI"/>
-                                              
-                                            </ListItemButton>
-                                          </ListItem>
-                                        );
-                                      }
-                                    ) : <></>
-                                  } 
-                                  </List>                               
+                                <h1 className="venueTitle">{marker.name}</h1>
+                                <div className='ratingDiv'>
+                                  <Rating readOnly precision={0.5} value={this.state.selectedVenueInfo.rating_avg}></Rating>
+                                  <h3 className='numberReviews'>{this.state.selectedVenueInfo ? this.state.selectedVenueInfo.review_ids.length : 0} Reviews</h3>
+                                  <Link className='addReviewLink' to={"/AddReviewPage?venue_info=" + JSON.stringify({id:this.state.selectedMarker})}>
+                                    Add Review
+                                  {/* <button className='addReviewButton'>Add Review</button> */}
+                                </Link>
+                                </div>
+                               {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}> */}
+                               {
+                                this.state.selectedVenueEvents && this.state.selectedVenueEvents.length > 0 ? 
+                                <List style={{maxHeight: "300px", overflow: "auto"}}>
+                                {
+                                  this.state.selectedVenueEvents ? this.state.selectedVenueEvents.map(
+                                    (event) => {
+                                      // console.log("EVENT", event);
+                                      return (
+                                        <ListItem key={event.id} >
+                                          <ListItemButton onClick={() => {this.listItemOnClick(event.id)}}>
+                                            <div className='eventAlignmentDiv'>
+                                              <div className='greyBoxImageDiv'>
+                                                <img src={event.image ? event.image : GreyBox} className='greyBoxImage' alt="GI"/>
+                                              </div>
+                                              <div className='eventInfo'>
+                                                <h3 id="eventName">{event.description}</h3>
+                                                <br/>
+                                                <h4>{(() =>{
+                                                  // const arr = event.datetime.split(/-|\s|:/);
+                                                  // return dayjs(new Date(arr[0], arr[1] -1, arr[2], arr[3], arr[4], arr[5])).format("ddd MMM D YYYY [@] h:mm a [GMT]Z");
+                                                  return event.datetime.format("ddd MMM D YYYY [@] h:mm a [GMT]Z");
+                                                })()}</h4>
+                                                <h4 id="detailsText">Click for Details</h4>
+                                              </div>
+                                            </div>
+                                          </ListItemButton>
+                                        </ListItem>
+                                      );
+                                    }
+                                  ) : <></>
+                                } 
+                                </List> 
+                                : (this.state.loadingData ? 
+                                  <h3 className="noEventsDiv">Loading Data...</h3>
+                                  :
+                                  <h3 className="noEventsDiv">No Events in the Next Week</h3>
+                                  ) 
+                               }
                               </div>
-                            </InfoWindowF>                   
-                          ) : null
+                            </InfoWindowF>
+                          ) : <></>
                         }
-                        </MarkerF>
                       </div>)
                   } catch (error) {
                     console.log("error", error);
@@ -506,6 +428,7 @@ export default class MapPage extends React.Component {
                 }
               ) : <></>
             }
+            
           </GoogleMap>
         </LoadScript>
         {this.state.selectedMarker ? <div id='detailInfoDiv'>
@@ -514,6 +437,8 @@ export default class MapPage extends React.Component {
             venue={this.state.selectedVenueInfo}
             /></div> : <></>
         }
+        </div>
+        
         </div>
       </div>
     );

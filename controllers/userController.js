@@ -7,14 +7,19 @@ const jsonwebtoken = require('jsonwebtoken');
 
 const createUser = function(req, res) {
     const errors = validationResult(req);
-    console.log("GOT REQUEST", req);
+    console.log("GOT REQUEST");
     if (!errors.isEmpty()) {
+        console.log("is empty");
         return res.status(400).json(message.response(errors.array()[0].msg, {}));
     }
 
     const user = new User(req.body);
     user.save((err, user) => {
         if (err) {
+            console.log("saving error", err);
+            if (err.name === "ValidationError") {
+                return res.status(403).send({message: "User already exists", data: {}});
+            }
             return res.status(400).json(message.response(err.message, {}));
         }
 
