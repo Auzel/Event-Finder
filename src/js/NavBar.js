@@ -4,6 +4,7 @@ import Eventology from '../assets/Logo_Banner.png';
 import { Link } from 'react-router-dom';
 import NavButton from './NavButton';
 import PropTypes from 'prop-types';
+import { CircularProgress } from '@mui/material';
 
 export default class NavBar extends React.Component {
     constructor(props) {
@@ -28,7 +29,10 @@ export default class NavBar extends React.Component {
         } else if (this.props.variant == "map") {
             return (
                 <div className='navBar'>
-                    {this.logoImg()}
+                    <div className='logoWLoading'>
+                        {this.logoImg()}
+                        {this.props.loadingIcon ? <div className='progressCircle'><CircularProgress /></div> : <></>}
+                    </div>
                     <div className='navButtons'>
                         <div className='navBarButtonDiv'>
                             <NavButton className="navBarButton" to="/AccountInformation" variant="small" text="ACCOUNT"/>
@@ -76,9 +80,11 @@ export default class NavBar extends React.Component {
 
 NavBar.propTypes = {
     logoLink: PropTypes.string,
-    variant: PropTypes.string
+    variant: PropTypes.string,
+    loadingIcon: PropTypes.bool
 }
 
 NavBar.defaultProps = {
-    logoLink: "/"
+    logoLink: "/",
+    loadingIcon: false
 }

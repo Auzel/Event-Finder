@@ -3,6 +3,8 @@ import React from 'react';
 import SignupForm from './SignupForm';
 import NavBar from "./NavBar.js"
 import axios from 'axios';
+import { setUserId } from './userId';
+import { setToken } from './token';
 
 const validator = require("validator");
 
@@ -219,13 +221,23 @@ class SignupPage extends React.Component
       password: this.state.user.password,
       eventPrefs: []
     }).then(
-      (respondToGalleryUrl) => {
-        console.log(respondToGalleryUrl);
-      }
-        // this.setState({
-        //   characters: respondToGalleryUrl.data.data, characterGallery: {} }); 
-        // }
-      ).catch((error) => {
+      (response) => {
+        // console.log(res);
+        console.log(response);
+        let res_id = response.data.data._id;
+        let res_token = response.data.data.token;
+        console.log(response.token);
+
+        // Update storage with user id and token
+        setUserId(res_id);
+        setToken(res_token);
+
+        // Go to the map page
+        window.location = "http://localhost:3000/Map";
+      }).catch((error) => {
+        if (error.response.data.message === "User already exists") {
+          this.setState({errors: {message: "Email already used, please login"}});
+        }
         console.log("ERROR!", error);
       });
 

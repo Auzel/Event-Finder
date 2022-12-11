@@ -18,10 +18,13 @@
 {
     height: 100%;
     width: 138px;
+    // align-self: flex-end;
 }
 
 .logoLink {
-    align-self: flex-start;
+    display: flex;
+    justify-items: flex-end;
+    align-self: flex-end;
 }
 
 .navButtons {
@@ -37,4 +40,11 @@
 
 .navBarButton {
     margin-right: 24px;
+}
+
+.logoWLoading {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items:center;
 }

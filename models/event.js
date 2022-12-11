@@ -3,7 +3,14 @@ var mongoose = require('mongoose');
 
 // Define our event schema
 var EventSchema = new mongoose.Schema({
-    name: {type: String, required: true}
+    _id: {type: mongoose.Schema.Types.ObjectId, required: true, unique : true},
+    description: {type: String, required: true} ,
+    datetime: { type: Date, required: true },
+    link: {type: String, required: true} ,
+    image: {type: String, required: true} ,
+    category: {type: String, required: true} ,
+    venues: {type: [String], required: true},
+    
     // add more here
 });
 
