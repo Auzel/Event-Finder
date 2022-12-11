@@ -1,0 +1,17 @@
+image: node:latest
+
+before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+
+stages:
+    - production
+
+production:
+    stage: production
+    image: ruby:latest
+    script:
+        - dpl --provider=heroku --app=final-project-409 --api-key=bb90ed1a-3e2c-4be2-b1e1-29e37b8ca068
+    only:
+        - master
