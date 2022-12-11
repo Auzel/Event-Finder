@@ -47,19 +47,23 @@ class AccountInformation extends React.Component
         eventPrefs: [],
         reviews: []
       },
-      review_objs: []
+      review_objs: [],
+      loadingData: false
     }
   }
 
   componentDidMount() {
 
     // get user information and update the state
+    this.setState({loadingData: true});
     this.axios.get('/users', {
       // retry: 3,
       _id: getUserId()
     }).then(
       (res) => {
         console.log(res);
+
+        this.setState({loadingData: false});
 
         this.setState({
           user: {
@@ -80,10 +84,12 @@ class AccountInformation extends React.Component
          * the state only when all requests are finished
          * */
         let review_objs = [];
+        this.setState({loadingData: true});
         Promise.all(res.data.data.reviews.map((review) => {
           return this.axios.get(`/reviews/${review}`, {})
         })).then(
           (values) => {
+            this.setState({loadingData: false});
             values.map((value) => {
               review_objs.push(value.data.data);
             })
@@ -94,6 +100,7 @@ class AccountInformation extends React.Component
 
         
       }).catch((error) => {
+        this.setState({loadingData: false});
         console.log("ERROR!", error);
         this.setState({
           errors: {
@@ -155,7 +162,7 @@ class AccountInformation extends React.Component
                   );
                 })
                 :
-                <div className='progressCircle'><CircularProgress /></div>
+                (this.state.loadingData ? <div className='progressCircle'><CircularProgress /></div> : <h2>No Reviews Yet</h2>)
               }
             </div>
     

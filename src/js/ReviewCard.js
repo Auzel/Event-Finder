@@ -18,27 +18,38 @@ export default class ReviewCard extends React.Component {
     render() {
         return (
             <div className="mainDiv">
-                <Link className="linkComponent" to={`/editreviewpage?review=${JSON.stringify(this.props.review)}`}>
+                {this.props.clickable ? <Link  className="linkComponent" to={`/editreviewpage?review=${JSON.stringify(this.props.review)}`}>
                     <div className="componentDiv">
-                        <h3>{this.props.review.eventAttendedName}</h3>
-                        <div className="ratingDiv">
-                            <Rating value={this.props.review.rating} size="small" precision={0.5} />
+                        <h3 className="ratingCardTitle">{this.props.review.eventAttendedName}</h3>
+                        <div className="ratingCardDiv">
+                            <Rating value={this.props.review.rating} size="small" precision={0.5} readOnly />
                             {this.props.showUsername ? <div className="reviewUsername">@{this.props.user.username}</div> : <></>}
                         </div>
                         {this.props.review.short_comment && this.props.review.short_comment != "" ? <h4>{this.props.review.short_comment}</h4> : <></>}
                         <p className="description">{this.props.review.long_comment}</p>
                     </div>
                 </Link>
+                : <div className="componentDiv">
+                <h3 className="ratingCardTitle">{this.props.review.eventAttendedName}</h3>
+                <div className="ratingCardDiv">
+                    <Rating value={this.props.review.rating} size="small" precision={0.5} readOnly />
+                    {this.props.showUsername ? <div className="reviewUsername">@{this.props.user.username}</div> : <></>}
+                </div>
+                {this.props.review.short_comment && this.props.review.short_comment != "" ? <h4>{this.props.review.short_comment}</h4> : <></>}
+                <p className="description">{this.props.review.long_comment}</p>
+            </div>}
             </div>
         )
     }
 }
 
 ReviewCard.propTypes = {
-    user: PropTypes.object.isRequired,
-    showUsername: PropTypes.bool
+    user: PropTypes.object,
+    showUsername: PropTypes.bool,
+    clickable: PropTypes.bool
 }
 
 ReviewCard.defaultProps = {
-    showUsername: true
+    showUsername: true,
+    clickable: true
 }

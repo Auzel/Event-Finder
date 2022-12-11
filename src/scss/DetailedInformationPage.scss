@@ -1,13 +1,14 @@
 @import "./styles.scss";
 
 #detailMainDiv {
-    width: 100%;
+    width: min(100%, 1000px);
     height: calc(100vh - $navbar-height);
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items:flex-start;
     padding: 3vw;
+    margin: 0 auto;
 }
 
 #detailImg {
@@ -15,3 +16,25 @@
     margin-right: 40px;
 }
 
+.reviewCardDetailed {
+    margin: 0;
+}
+
+#eventInfoDetailDiv {
+    margin-left: 16px;
+}
+
+#venueReviewsID {
+    margin-left: 16px;
+}
+
+#eventTitleDetailedID {
+    margin-left: 0px !important;
+}
+
+#detailRatingDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}

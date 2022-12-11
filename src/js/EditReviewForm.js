@@ -41,8 +41,7 @@ const EditReviewForm = ({
                             size="large"
                             value={review.rating}
                             precision={0.5} 
-                            error={errors.rating ? true : false}
-                            helperText={errors.rating}
+                            // error={`${errors.rating ? true : false}`}
                         />
                     </FormControl>
                 </div>
@@ -55,12 +54,12 @@ const EditReviewForm = ({
                             variant="standard"
                             fullWidth={true}
                             className="input"
-                            name="title"
+                            name="eventAttendedName"
                             placeholder="Title"
-                            value={review.title}
+                            value={review.eventAttendedName}
                             onChange={onChangeTitle}
-                            error={errors.title ? true : false}
-                            helperText={errors.title}
+                            error={errors.eventAttendedName ? true : false}
+                            helperText={errors.eventAttendedName}
                         />
                     </FormControl>
                 </div>
@@ -72,7 +71,7 @@ const EditReviewForm = ({
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
                                 inputFormat="MM/DD/YYYY"
-                                value={review.date.format()}
+                                value={review.eventAttendedDate}
                                 onChange={onChangeDate}
                                 renderInput={(params) => <TextField {...params} />}
                                 />
@@ -100,16 +99,16 @@ const EditReviewForm = ({
                             variant="outlined"
                             fullWidth={true}
                             className="input"
-                            name="description"
+                            name="long_comment"
                             placeholder="Description"
                             // Maxes this a multiline text input component
                             multiline
                             minRows={2}
                             maxRows={4}
-                            value={review.description}
+                            value={review.long_comment}
                             onChange={onChangeDescription}
-                            error={errors.description ? true : false}
-                            helperText={errors.description}
+                            error={errors.long_comment ? true : false}
+                            helperText={errors.long_comment}
                             // Set max chracters for the input
                             inputProps={{maxLength: 140}}
                         />

@@ -1,3 +1,4 @@
+@import "./styles.scss";
 *
 { 
     padding: 0;
@@ -15,14 +16,43 @@ body
     margin: 0%;
 }
 
-.header
+.headerLanding
 {
     background-color: #AEE5D1;
     width: 100%;
-    height: 10%;
-    position: fixed;
-    z-index: 99;
-    top: 0;
+    height: $navbar-height;
+    // position: fixed;
+    // z-index: 99;
+    // top: 0;
+}
+
+.footer
+{
+    background-color: #AEE5D1;
+    width: 100%;
+    // height: 50%;
+    height: $navbar-height;
+    // line-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p
+{
+    text-align: center;
+    font-weight: 300;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+#mainLandingDiv {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .headerImage
@@ -33,31 +63,67 @@ body
 
 .buttonContainerDiv
 {
-    margin-top: 10%;
-    height: 40vw;
     width: 100%;
-    margin-bottom: 5%;
+    // margin-top: 10%;
+    // height: 40vw;
+    // width: 100%;
+    // margin-bottom: 5%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .buttonContainerDivOne
 {
-    width: 50%;
-    float: left;
+    width: 50vw;
+    // float: left;
+    padding-left: 3vw;
+}
+
+.mainLogoLandingDiv {
+    width: 100%;
+    height: 45%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 3vw;
 }
 
 .buttonContainerDiv img
 {
-    margin-left: 10%;
-    height: 100%;
-    width: 90%;
+    // margin-left: 10%;
+    // height: 100%;
+    // width: 90%;
+    display: block;
+    max-width:100%;
+    max-height:100%;
+    width: auto;
+    height: auto; 
+    box-shadow: 0px 0px 3px gray;
 }
 
 .links
 {
-    margin-left: 10%;
+    // margin-left: 10%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.sideImgDiv {
+    width: 50vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8vw;
+}
+
+#landingH1 {
+    font-size: 4vw;
+    font-weight: 200;
 }
 
 .LoginPageLink
@@ -68,6 +134,7 @@ body
     font-weight: bold;
     text-decoration: none;
     // margin-right: 10%;
+    box-shadow: 1px 1px 1px gray;
 }
 
 .LoginPageLink:hover
@@ -83,6 +150,7 @@ body
     font-size: 4vw;
     font-weight: bold;
     text-decoration: none;
+    box-shadow: 1px 1px 1px gray;
 }
 
 .SignupPageLink:hover
@@ -172,17 +240,3 @@ body
     margin-left: 5%;
 }
 
-.footer
-{
-    background-color: #AEE5D1;
-    width: 100%;
-    height: 50%;
-    line-height: 50px;
-}
-
-.footer p
-{
-    text-align: center;
-    font-weight: bold;
-    vertical-align: middle;
-}

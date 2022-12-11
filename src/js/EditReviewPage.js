@@ -3,6 +3,8 @@ import React from 'react';
 import EditReviewForm from './EditReviewForm';
 import NavBar from "./NavBar.js"
 import dayjs from 'dayjs';
+import axios from 'axios';
+import { getToken } from './token.js';
 
 const validator = require("validator");
 
@@ -28,6 +30,48 @@ export default class EditReviewPage extends React.Component
   constructor(props) {
     super(props);
 
+    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios.defaults.headers.common['Authorization'] =
+         'Bearer ' + getToken();
+
+    this.axios.interceptors.response.use(null, (error) => {
+    // Intercept an error related to the server not accepting connection and rerun
+
+      if (error.config && !error.response && error.code === "ERR_NETWORK") {
+        console.log(`server connection error, repeating request`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+
+      if (error.response && error.response.data && error.response.data.data && error.response.data.data === "Request failed with status code 429") {
+        console.log(`server rate limiting`);
+        return this.axios.request({
+          timeout: 3000,
+          method: error.config.method,
+          url: error.config.url,
+          params: error.config.params
+        });
+      }
+      // It wasn't a server error, so reject like normal
+      return Promise.reject(error);
+    })
+
+    const queryParameters = new URLSearchParams(window.location.search)
+    const review = JSON.parse(queryParameters.get("review"));
+    console.log(review);
+    this.providedReview = review;
+    
+
+    // parse for date
+    review.eventAttendedDate = dayjs(review.eventAttendedDate);
+    review.rating = parseInt(review.rating);
+
+    // console.log(review);
+
     // State contains any mutable value in the form
     this.state = {
       // Contains error messages for specific components.
@@ -35,12 +79,7 @@ export default class EditReviewPage extends React.Component
       // name and the value to the error message to display.
       errors: {},
       // Contains the key/value pairs for inputed values.
-      review: {
-        rating: "",
-        title: "",
-        date: dayjs(),
-        description: ""
-      },
+      review: review
     }
 
     // bind the handlers to 'this'.
@@ -107,7 +146,7 @@ export default class EditReviewPage extends React.Component
    handleChangeDate(newDate) {
     // console.log(event);
     let review = this.state.review;
-    review.date = newDate;
+    review.eventAttendedDate = newDate;
     this.setState({
       review: review
     })
@@ -163,11 +202,23 @@ export default class EditReviewPage extends React.Component
    * with the user authentication database and performs functions based on
    * the response.
    * 
-   * @param {dictionary} user Key/value pairs for username, password, email
+   * @param {dictionary} review Key/value pairs for username, password, email
    * that will be submitted to the database.
    */
    submitEditReviewForm(review) {
     console.log("submitting...");
+    console.log(review);
+    this.axios.put(`/reviews/${review._id}`, {
+      rating: review.rating,
+      long_comment: review.long_comment,
+      eventAttendedName: review.eventAttendedName,
+      eventAttendedDate: review.eventAttendedDate
+    }).then((res) => {
+      // console.log(res);
+      window.location = "http://localhost:3000/accountinformation";
+    }).catch((error) => {
+      console.log("error", error);
+    })
   }
  
   /**
@@ -190,21 +241,23 @@ export default class EditReviewPage extends React.Component
 
     let hasAllInfo = true;
     for (const [key, value] of Object.entries(this.state.review)) {
-      if (value == "") hasAllInfo = false;
+      if (value === "") hasAllInfo = false;
     }
+
+    // console.log(hasError, hasAllInfo);
 
     if (hasError || !hasAllInfo) {
       errors.message = "Please satisfy all requirements.";
     } else {
       console.log("no errors");
       // Actually submit the form
-      var review = {
-        rating: this.state.review.rating,
-        title: this.state.review.title,
-        date: this.state.review.date,
-        description: this.state.review.description
-      }
-      this.submitEditReviewForm(review);
+      // var review = {
+      //   rating: this.state.review.rating,
+      //   title: this.state.review.title,
+      //   date: this.state.review.date,
+      //   description: this.state.review.description
+      // }
+      this.submitEditReviewForm(this.state.review);
     }
     this.setState({
       errors: errors

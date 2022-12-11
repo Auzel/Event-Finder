@@ -65,14 +65,7 @@ export default class MapPage extends React.Component {
       venues: [],
       selectedMarker: null,
       // Variable set to true when list item button pushed and we should scroll to it AFTER next update
-      selectedVenueInfo: {
-        "id": null, 
-        "name": "",
-        "location": [],
-        "event_ids": [],
-        "review_ids": [],
-        "rating_avg": null
-      },
+      selectedVenueInfo: {},
       loadingData: false,
       selectedVenueEvents: [],
       selectedEvent: {},
@@ -189,6 +182,10 @@ export default class MapPage extends React.Component {
     }).then(
       (response) => {
         this.setState({loadingData: false});
+        if (response.data && response.data.data) {
+          console.log(response.data.data[0]);
+          this.setState({selectedVenueInfo: response.data.data[0]});
+        }
         console.log("BASE RESPONSE",response);
         const event_ids = response.data.data[0].event_ids;
         if (event_ids.length <= 0) {
@@ -260,11 +257,9 @@ export default class MapPage extends React.Component {
     }, () => {console.log("Callback"); return this.updateSelectedMarkerVenueInfo()})
   }
 
-  listItemOnClick(id) {
+  listItemOnClick(event) {
     this.setState({
-      selectedEvent: this.state.selectedVenueEvents.find((element) => {
-        return element.id === id;
-      })
+      selectedEvent: event
     });
   }
 
@@ -324,7 +319,10 @@ export default class MapPage extends React.Component {
   render() {
     // console.log("selected marker:", this.state.selectedMarker);
     // console.log("venues:", this.state.venues);
-
+    // Object.keys(this.state.selectedVenueInfo).length >  ? console.log("review:", )
+    // Object.keys(this.state.selectedVenueInfo).length > 0 ? console.log(this.state.selectedVenueInfo.rating_avg) : <></>;
+    // console.log(this.state);
+    // console.log(this.state.selectedMarker,Object.keys(this.state.selectedEvent),Object.keys(this.state.selectedVenueInfo));
     return (
       <div>
         <NavBar variant="map" loadingIcon={this.state.loadingData}></NavBar>
@@ -336,7 +334,7 @@ export default class MapPage extends React.Component {
             mapContainerStyle={containerStyle}
             center={{lat: this.center[0], lng: this.center[1]}}
             zoom={default_zoom}
-            options={{streetViewControl: false, scrollwheel: false}}
+            options={{streetViewControl: false, scrollwheel: false, minZoom: 4}}
             onLoad={this.onMapLoad}
             onCenterChanged={this.onCenterChanged}
             onZoomChanged={this.handleOnZoomChange}
@@ -370,8 +368,8 @@ export default class MapPage extends React.Component {
                               <div className='eventPopUp'>
                                 <h1 className="venueTitle">{marker.name}</h1>
                                 <div className='ratingDiv'>
-                                  <Rating readOnly precision={0.5} value={this.state.selectedVenueInfo.rating_avg}></Rating>
-                                  <h3 className='numberReviews'>{this.state.selectedVenueInfo ? this.state.selectedVenueInfo.review_ids.length : 0} Reviews</h3>
+                                  <Rating readOnly precision={0.5} value={Object.keys(this.state.selectedVenueInfo).length > 0 ? this.state.selectedVenueInfo.avg_rating : 0}></Rating>
+                                  <h3 className='numberReviews'>{Object.keys(this.state.selectedVenueInfo).length > 0 ? this.state.selectedVenueInfo.review_ids.length : 0} Reviews</h3>
                                   <Link className='addReviewLink' to={"/AddReviewPage?venue_info=" + JSON.stringify({id:this.state.selectedMarker})}>
                                     Add Review
                                   {/* <button className='addReviewButton'>Add Review</button> */}
@@ -387,7 +385,7 @@ export default class MapPage extends React.Component {
                                       // console.log("EVENT", event);
                                       return (
                                         <ListItem key={event.id} >
-                                          <ListItemButton onClick={() => {this.listItemOnClick(event.id)}}>
+                                          <ListItemButton onClick={() => {this.listItemOnClick(event)}}>
                                             <div className='eventAlignmentDiv'>
                                               <div className='greyBoxImageDiv'>
                                                 <img src={event.image ? event.image : GreyBox} className='greyBoxImage' alt="GI"/>
@@ -431,7 +429,7 @@ export default class MapPage extends React.Component {
             
           </GoogleMap>
         </LoadScript>
-        {this.state.selectedMarker ? <div id='detailInfoDiv'>
+        {this.state.selectedMarker && Object.keys(this.state.selectedEvent).length > 0 && Object.keys(this.state.selectedVenueInfo).length > 0 ? <div id='detailInfoDiv'>
           <DetailedInformationPage
             event={this.state.selectedEvent}
             venue={this.state.selectedVenueInfo}
