@@ -14,9 +14,6 @@ const createUser = function(req, res) {
     const user = new User(req.body);
     user.save((err, user) => {
         if (err) {
-            if (err.name === "ValidationError") {
-                return res.status(403).send({message: "User already exists", data: {}});
-            }
             return res.status(400).json(message.response(err.message, {}));
         }
 
