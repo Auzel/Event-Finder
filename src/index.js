@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 // import {Routes, Route} from "react-router-dom"
-import { HashRouter} from "react-router-dom";
+import { BrowserRouter} from "react-router-dom";
 import './scss/index.scss';
 import App from './js/App.js';
 import reportWebVitals from './reportWebVitals';
