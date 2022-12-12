@@ -10,12 +10,7 @@ module.exports = function (router) {
     var signoutRoute = router.route('/signout');
     var userRoute = router.route('/users')
 
-    signupRoute.post([
-        check("name", "Name cannot be empty").isLength({min: 1}),
-        check("username", "Username cannot be empty").isLength({min: 1}),
-        check("email", "Email should be valid").isEmail(),
-        check("password", "Password must be at least 6 characters").isLength({min: 6})
-    ], userController.createUser);
+    signupRoute.post(userController.createUser);
     signinRoute.post(userController.signin);
     signinRoute.get(userController.checkSignin);
     signoutRoute.get(userController.signout);
