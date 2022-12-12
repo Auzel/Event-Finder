@@ -239,7 +239,9 @@ class SignupPage extends React.Component
         // window.location = "https://nickwinkler.web.illinois.edu/Map";
       }).catch((error) => {
         console.log("ERROR", error);
-        if (error.response.data.message === "User validation failed: email: email must be unique") {
+        if (error.response.data.message === "User validation failed: email: email must be unique, username: username must be unique") {
+          this.setState({errors: {message: "Email and Username already taken"}});
+        } else if (error.response.data.message === "User validation failed: email: email must be unique") {
           this.setState({errors: {message: "Email already taken"}});
         } else if (error.response.data.message === "User validation failed: username: username must be unique") {
           this.setState({errors: {message: "Username already taken"}});
