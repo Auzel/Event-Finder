@@ -6,11 +6,6 @@ const {verifyToken} = require("./verifyToken");
 const jsonwebtoken = require('jsonwebtoken');
 
 const createUser = function(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json(message.response(errors.array()[0].msg, {}));
-    }
-
     const user = new User(req.body);
     user.save((err, user) => {
         if (err) {
