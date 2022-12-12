@@ -14,7 +14,7 @@ const createUser = function(req, res) {
     const user = new User(req.body);
     user.save((err, user) => {
         if (err) {
-            return res.status(400).json(message.response(err.message, {}));
+            return res.status(400).json(message.response("User already exists", {}));
         }
 
         const token = jsonwebtoken.sign({_id: user._id}, secrets.jwt_sign_phrase);
