@@ -85,7 +85,7 @@ export default class DetailedInformationPage extends Component {
               review_objs.push(value.data.data);
             });
             this.setState({
-              reviews: review_objs
+              reviews: review_objs.reverse()
             });
             // console.log(review_objs);
         }).catch((error) =>{
