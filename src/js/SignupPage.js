@@ -50,7 +50,7 @@ class SignupPage extends React.Component
     }
     // this.axios=null;
 
-    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
 
     // bind the handlers to 'this'.
     this.handleChangeFullName = this.handleChangeFullName.bind(this);
@@ -223,22 +223,22 @@ class SignupPage extends React.Component
     }).then(
       (response) => {
         // console.log(res);
-        console.log(response);
+        // console.log(response);
         let res_id = response.data.data._id;
         let res_token = response.data.data.token;
-        console.log(response.token);
+        // console.log(response.token);
 
         // Update storage with user id and token
         setUserId(res_id);
         setToken(res_token);
 
         // Go to the map page
-        window.location = "http://localhost:3000/Map";
+        window.location = "https://nickwinkler.web.illinois.edu/Map";
       }).catch((error) => {
         if (error.response.data.message === "User already exists") {
           this.setState({errors: {message: "Email already used, please login"}});
         }
-        console.log("ERROR!", error);
+        // console.log("ERROR!", error);
       });
 
 
@@ -271,7 +271,7 @@ class SignupPage extends React.Component
     if (hasError || !hasAllInfo) {
       errors.message = "Please satisfy all requirements.";
     } else {
-      console.log("no errors");
+      // console.log("no errors");
       // Actually submit the form
       var user = {
         usr: this.state.user.username,

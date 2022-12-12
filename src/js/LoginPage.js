@@ -49,7 +49,7 @@ export default class LoginPage extends React.Component
       showPw: false
     }
 
-    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
 
     // bind the handlers to 'this'.
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -175,20 +175,20 @@ export default class LoginPage extends React.Component
       // eventPrefs: []
     }).then(
       (response) => {
-        console.log(response);
+        // console.log(response);
         let res_id = response.data.data._id;
         let res_token = response.data.data.token;
-        console.log(response.token);
+        // console.log(response.token);
 
         // Update storage with user id and token
         setUserId(res_id);
         setToken(res_token);
 
         // Go to the map page
-        window.location = "http://localhost:3000/Map";
+        window.location = "http://nickwinkler.web.illinois.edu/Map";
       }
       ).catch((error) => {
-        console.log("ERROR!", error);
+        // console.log("ERROR!", error);
         this.setState({
           errors: {
             message: "Unable to Login with Given Information"
@@ -225,7 +225,7 @@ export default class LoginPage extends React.Component
     if (hasError || !hasAllInfo) {
       errors.message = "Please satisfy all requirements.";
     } else {
-      console.log("no errors");
+      // console.log("no errors");
       // Actually submit the form
       var user = {
         usr: this.state.user.username,

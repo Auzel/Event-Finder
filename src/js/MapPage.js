@@ -30,7 +30,7 @@ export default class MapPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
     this.axios.defaults.headers.common['Authorization'] =
          'Bearer ' + getToken();
 
@@ -72,7 +72,8 @@ export default class MapPage extends React.Component {
       mapref: null,
       centerLoc: default_center,
       zoomLevel: default_zoom,
-      venuesUpdateTimeoutId: null
+      venuesUpdateTimeoutId: null,
+      errors: {}
     };
 
     this.center = default_center;
@@ -101,6 +102,13 @@ export default class MapPage extends React.Component {
 
   componentDidMount() {
     document.addEventListener("keydown", this.keydownListener, false);
+    if (!getToken()) {
+      let errors = this.state.errors;
+      errors.login = "Please login to use this page";
+      this.setState({
+        errors: errors
+      })
+    }
     this.updateApiVenues();
   }
 
@@ -123,15 +131,15 @@ export default class MapPage extends React.Component {
   }
 
   updateApiVenues() {
-    console.log(this.getRadius(this.state.zoomLevel));
+    // console.log(this.getRadius(this.state.zoomLevel));
     let userId = getUserId();
-    console.log("USER ID", userId);
+    // console.log("USER ID", userId);
     this.setState({loadingData: true, selectedEvent: {}, selectedVenueEvents: [], selectedMarker: null});
     this.axios.get(`/map?latlong=${this.center[0]},${this.center[1]}&radius=${Math.min(this.getRadius(this.state.zoomLevel), 1000)}&size=50&sort=relevance,desc`, {
     }).then(
       (response) => {
         this.setState({loadingData: false});
-        console.log(response);
+        // console.log(response);
         
         let data = response.data.data
 
@@ -148,10 +156,10 @@ export default class MapPage extends React.Component {
               location: [Number(location.latitude), Number(location.longitude)]
             });
           }
-          console.log("VENUES:", venues);
+          // console.log("VENUES:", venues);
 
           if (this.state.venues === venues) {
-            console.log("List equal!");
+            // console.log("List equal!");
             return;
           }
           
@@ -160,11 +168,11 @@ export default class MapPage extends React.Component {
           });
         }
     }).catch((error) => {
-      console.log("ERROR!", error);
+      // console.log("ERROR!", error);
+      let errors = this.state.errors;
+      errors.message = "map error";
       this.setState({
-        errors: {
-          message: "map error"
-        },
+        errors: errors,
         loadingData: true
       });
     })
@@ -176,17 +184,17 @@ export default class MapPage extends React.Component {
     if (!this.state.selectedMarker) return;
     let userId = getUserId();
     // console.log("USER ID", userId);
-    console.log("GETTING EVENTS");
+    // console.log("GETTING EVENTS");
     this.setState({loadingData: true});
     this.axios.get(`/venues/${this.state.selectedMarker}`, {
     }).then(
       (response) => {
         this.setState({loadingData: false});
         if (response.data && response.data.data) {
-          console.log(response.data.data[0]);
+          // console.log(response.data.data[0]);
           this.setState({selectedVenueInfo: response.data.data[0]});
         }
-        console.log("BASE RESPONSE",response);
+        // console.log("BASE RESPONSE",response);
         const event_ids = response.data.data[0].event_ids;
         if (event_ids.length <= 0) {
           this.setState({
@@ -229,15 +237,15 @@ export default class MapPage extends React.Component {
             })
           }
         ).catch((error) => {
-          console.log("ERROR", error);
+          // console.log("ERROR", error);
           this.setState({loadingData: false});
         });
     }).catch((error) => {
-      console.log("ERROR!", error);
+      // console.log("ERROR!", error);
+      let errors = this.state.errors;
+      errors.message = "map error";
       this.setState({
-        errors: {
-          message: "map error"
-        },
+        errors: errors,
         loadingData: false
       });
     })
@@ -249,12 +257,12 @@ export default class MapPage extends React.Component {
    * @param {*} id 
    */
   setSelectedMarker(id) {
-    console.log("set selected marker");
+    // console.log("set selected marker");
     this.setState({
       selectedMarker: id,
       selectedEvent: {},
       selectedVenueEvents: []
-    }, () => {console.log("Callback"); return this.updateSelectedMarkerVenueInfo()})
+    }, () => {return this.updateSelectedMarkerVenueInfo()})
   }
 
   listItemOnClick(event) {
@@ -294,7 +302,7 @@ export default class MapPage extends React.Component {
 
   handleOnZoomChange() {
     if (this.state.mapref) {
-      console.log(this.state.mapref.getZoom());
+      // console.log(this.state.mapref.getZoom());
       this.setState({
         zoomLevel: this.state.mapref.getZoom(),
         selectedEvent: {},
@@ -317,6 +325,7 @@ export default class MapPage extends React.Component {
   }
 
   render() {
+    // console.log(this.state.errors);
     // console.log("selected marker:", this.state.selectedMarker);
     // console.log("venues:", this.state.venues);
     // Object.keys(this.state.selectedVenueInfo).length >  ? console.log("review:", )
@@ -325,7 +334,7 @@ export default class MapPage extends React.Component {
     // console.log(this.state.selectedMarker,Object.keys(this.state.selectedEvent),Object.keys(this.state.selectedVenueInfo));
     return (
       <div>
-        <NavBar variant="map" loadingIcon={this.state.loadingData}></NavBar>
+        <NavBar variant="map" loadingIcon={this.state.loadingData} unauthorized={this.state.errors.login ? true : false}></NavBar>
         <div className='mapAndButton'>
         
         <div className='mapContainerDiv'>
@@ -350,13 +359,13 @@ export default class MapPage extends React.Component {
                   try {
                     // console.log("marker:", marker);
                     return (
-                      <div>
+                      <div key={marker.id}>
                         <Marker
                           title={marker.title}
                           // label={String(this.id)}
                           key={marker.id}
                           position={{lat: marker.location[0], lng: marker.location[1]}}
-                          onClick={() => {console.log(marker.id);this.onMarkerClick(marker.id)}} >
+                          onClick={() => {this.onMarkerClick(marker.id)}} >
                         </Marker>
                         {
                           this.state.selectedMarker === marker.id ? (
@@ -381,11 +390,12 @@ export default class MapPage extends React.Component {
                                 <List style={{maxHeight: "300px", overflow: "auto"}}>
                                 {
                                   this.state.selectedVenueEvents ? this.state.selectedVenueEvents.map(
-                                    (event) => {
+                                    (event, i) => {
                                       // console.log("EVENT", event);
+                                      // console.log(event.id);
                                       return (
                                         <ListItem key={event.id} >
-                                          <ListItemButton onClick={() => {this.listItemOnClick(event)}}>
+                                          <ListItemButton key={event.id} onClick={() => {this.listItemOnClick(event)}}>
                                             <div className='eventAlignmentDiv'>
                                               <div className='greyBoxImageDiv'>
                                                 <img src={event.image ? event.image : GreyBox} className='greyBoxImage' alt="GI"/>
@@ -420,7 +430,7 @@ export default class MapPage extends React.Component {
                         }
                       </div>)
                   } catch (error) {
-                    console.log("error", error);
+                    // console.log("error", error);
                     return <></>;
                   }
                 }
