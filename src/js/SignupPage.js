@@ -5,6 +5,7 @@ import NavBar from "./NavBar.js"
 import axios from 'axios';
 import { setUserId } from './userId';
 import { setToken } from './token';
+import { Navigate } from 'react-router-dom';
 
 const validator = require("validator");
 
@@ -46,7 +47,8 @@ class SignupPage extends React.Component
         fullname: ""
       },
       // Value for whether the password should be astricts
-      showPw: false
+      showPw: false,
+      redirect: undefined
     }
     // this.axios=null;
 
@@ -233,7 +235,8 @@ class SignupPage extends React.Component
         setToken(res_token);
 
         // Go to the map page
-        window.location = "https://nickwinkler.web.illinois.edu/Map";
+        this.setState({redirect: true});
+        // window.location = "https://nickwinkler.web.illinois.edu/Map";
       }).catch((error) => {
         if (error.response.data.message === "User already exists") {
           this.setState({errors: {message: "Email already used, please login"}});
@@ -296,6 +299,7 @@ class SignupPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
+        { this.state.redirect ? <Navigate to="/map" replace={true} /> : <></> }
         <NavBar variant="blank" logoLink="/" />
         <SignupForm
           // Pass the state values and handler functions as parameters
