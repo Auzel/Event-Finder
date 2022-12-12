@@ -94,7 +94,7 @@ class AccountInformation extends React.Component
               review_objs.push(value.data.data);
             })
             this.setState({
-              review_objs: review_objs
+              review_objs: review_objs.reverse()
             })
         });
 
