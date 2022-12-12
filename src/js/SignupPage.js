@@ -238,8 +238,11 @@ class SignupPage extends React.Component
         this.setState({redirect: true});
         // window.location = "https://nickwinkler.web.illinois.edu/Map";
       }).catch((error) => {
-        if (error.response.data.message === "User already exists") {
-          this.setState({errors: {message: "Email already used, please login"}});
+        console.log("ERROR", error);
+        if (error.response.data.message === "email must be unique") {
+          this.setState({errors: {message: "Email already taken"}});
+        } else if (error.response.data.message === "username must be unique") {
+          this.setState({errors: {message: "Username already taken"}});
         } else {
           this.setState({errors: {message: "Server error, reload page and try again"}});
         }
