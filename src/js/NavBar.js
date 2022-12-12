@@ -5,10 +5,20 @@ import { Link } from 'react-router-dom';
 import NavButton from './NavButton';
 import PropTypes from 'prop-types';
 import { CircularProgress } from '@mui/material';
+import { setToken } from './token';
+import { setUserId } from './userId';
 
 export default class NavBar extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleLogout = this.handleLogout.bind(this);
+    }
+
+    handleLogout() {
+        console.log("logging out");
+        sessionStorage.clear();
+        window.location = "https://nickwinkler.web.illinois.edu/";
     }
 
     logoImg() {
@@ -31,14 +41,15 @@ export default class NavBar extends React.Component {
                 <div className='navBar'>
                     <div className='logoWLoading'>
                         {this.logoImg()}
-                        {this.props.loadingIcon ? <div className='progressCircle'><CircularProgress /></div> : <></>}
+                        {this.props.loadingIcon ? <div className='progressCircle'><CircularProgress style={{'color': "#415380"}}/></div> : <></>}
+                        {this.props.unauthorized ? <div className='unauthorizedText'>Please login to use this page</div> : <></>}
                     </div>
                     <div className='navButtons'>
                         <div className='navBarButtonDiv'>
                             <NavButton className="navBarButton" to="/AccountInformation" variant="small" text="ACCOUNT"/>
                         </div>
                         <div className='navBarButtonDiv'>
-                            <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>
+                            <div id="logoutButton" onClick={this.handleLogout}>LOGOUT</div>
                         </div>
                     </div>
                 </div>
@@ -52,7 +63,7 @@ export default class NavBar extends React.Component {
                             <NavButton className="navBarButton" to="/Map" variant="small" text="MAP"/>
                         </div>
                         <div className='navBarButtonDiv'>
-                            <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>
+                            <div id="logoutButton" onClick={this.handleLogout}>LOGOUT</div>
                         </div>
                     </div>
                 </div>
@@ -69,7 +80,7 @@ export default class NavBar extends React.Component {
                             <NavButton className="navBarButton" to="/Map" variant="small" text="MAP"/>
                         </div>
                         <div className='navBarButtonDiv'>
-                            <NavButton className="navBarButton" to="/" variant="small" text="LOGOUT"/>
+                            <div id="logoutButton" onClick={this.handleLogout}>LOGOUT</div>
                         </div>
                     </div>
                 </div>

@@ -23,7 +23,7 @@ function App() {
       <CssBaseline>
         <ThemeProvider theme={globalTheme}>
           <Routes>
-            <Route path = '/' element = {<LandingPage/>}/>
+            <Route path = '/' element={<LandingPage/>} />
             <Route path = '/LoginPage' element = {<LoginPage/>}/>
             <Route path = '/SignupPage' element ={<SignupPage/>}/>
             <Route path = '/AccountInformation' element = {<AccountInformation/>}/>

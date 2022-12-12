@@ -20,7 +20,7 @@ class AccountInformation extends React.Component
   constructor(props) {
     super(props);
 
-    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
     this.axios.defaults.headers.common['Authorization'] =    
          'Bearer ' + getToken();
 
@@ -61,7 +61,7 @@ class AccountInformation extends React.Component
       _id: getUserId()
     }).then(
       (res) => {
-        console.log(res);
+        // console.log(res);
 
         this.setState({loadingData: false});
 
@@ -101,7 +101,7 @@ class AccountInformation extends React.Component
         
       }).catch((error) => {
         this.setState({loadingData: false});
-        console.log("ERROR!", error);
+        // console.log("ERROR!", error);
         this.setState({
           errors: {
             message: "Unable to acces the user"
@@ -113,12 +113,12 @@ class AccountInformation extends React.Component
   render ()   // Here is the start of the render().
   {
     // console.log(this.state.user);
-    console.log(this.state.review_objs);
+    // console.log(this.state.review_objs);
     // Here we are returning the format of the List View.
     return (
       <div>
         
-        <NavBar variant="account" logoLink="/" />
+        <NavBar variant="account" logoLink="/" axios={this.axios}/>
 
         <div className="all">
           <div className="accountInformation">
@@ -158,7 +158,7 @@ class AccountInformation extends React.Component
                 this.state.review_objs.length > 0 ?
                 this.state.review_objs.map((review) => {
                   return(
-                    <ReviewCard review={review} user={this.state.user}/>
+                    <ReviewCard key={review._id} review={review} user={this.state.user}/>
                   );
                 })
                 :

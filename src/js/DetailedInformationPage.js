@@ -12,7 +12,7 @@ export default class DetailedInformationPage extends Component {
     constructor(props) {
         super(props);
 
-        this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+        this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
         this.axios.defaults.headers.common['Authorization'] =
             'Bearer ' + getToken();
 
@@ -57,8 +57,8 @@ export default class DetailedInformationPage extends Component {
     }
 
     componentDidMount() {
-        console.log("venue", this.props.venue);
-        console.log("event", this.props.event);
+        // console.log("venue", this.props.venue);
+        // console.log("event", this.props.event);
         this.getReviews();
     }
 
@@ -87,10 +87,10 @@ export default class DetailedInformationPage extends Component {
             this.setState({
               reviews: review_objs
             });
-            console.log(review_objs);
+            // console.log(review_objs);
         }).catch((error) =>{
             this.setState({loadingData: false});
-            console.log(error);
+            // console.log(error);
         });
     }
 
@@ -98,7 +98,7 @@ export default class DetailedInformationPage extends Component {
         let len = Object.keys(this.props.event).length;
         // console.log("Length:", len);
         if (len > 0) {
-            console.log("EVENT:", this.props.event);
+            // console.log("EVENT:", this.props.event);
         }
         return (
             <div>
@@ -129,7 +129,7 @@ export default class DetailedInformationPage extends Component {
                                     this.state.reviews.length > 0 ?
                                     this.state.reviews.map((review) => {
                                     return(
-                                        <ListItem>
+                                        <ListItem key={review._id}>
                                             <ReviewCard clickable={false} review={review} showUsername={false}/>
                                         </ListItem>
                                     );

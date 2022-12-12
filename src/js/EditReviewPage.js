@@ -30,7 +30,7 @@ export default class EditReviewPage extends React.Component
   constructor(props) {
     super(props);
 
-    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
     this.axios.defaults.headers.common['Authorization'] =
          'Bearer ' + getToken();
 
@@ -62,7 +62,7 @@ export default class EditReviewPage extends React.Component
 
     const queryParameters = new URLSearchParams(window.location.search)
     const review = JSON.parse(queryParameters.get("review"));
-    console.log(review);
+    // console.log(review);
     this.providedReview = review;
     
 
@@ -206,8 +206,8 @@ export default class EditReviewPage extends React.Component
    * that will be submitted to the database.
    */
    submitEditReviewForm(review) {
-    console.log("submitting...");
-    console.log(review);
+    // console.log("submitting...");
+    // console.log(review);
     this.axios.put(`/reviews/${review._id}`, {
       rating: review.rating,
       long_comment: review.long_comment,
@@ -215,7 +215,7 @@ export default class EditReviewPage extends React.Component
       eventAttendedDate: review.eventAttendedDate
     }).then((res) => {
       // console.log(res);
-      window.location = "http://localhost:3000/accountinformation";
+      window.location = "https://nickwinkler.web.illinois.edu/accountinformation";
     }).catch((error) => {
       console.log("error", error);
     })
@@ -249,7 +249,7 @@ export default class EditReviewPage extends React.Component
     if (hasError || !hasAllInfo) {
       errors.message = "Please satisfy all requirements.";
     } else {
-      console.log("no errors");
+      // console.log("no errors");
       // Actually submit the form
       // var review = {
       //   rating: this.state.review.rating,

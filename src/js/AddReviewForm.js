@@ -30,7 +30,7 @@ const AddReviewForm = ({
         <div>
             <form onSubmit={onSubmit} className="formReview">
                 <h1>ADD REVIEW</h1>
-                <FormHelperText error={errors.message ? true : false}>{errors.message}</FormHelperText>
+                <FormHelperText error={errors.message ? true : undefined}>{errors.message}</FormHelperText>
                 <div className="component ratingDiv">
                     <FormControl className="formControl">
                         <FormHelperText className="component-helper-text">
@@ -40,10 +40,10 @@ const AddReviewForm = ({
                             name="rating"
                             onChange={onChangeRating}
                             size="large"
-                            value={review.rating}
+                            value={Number(review.rating)}
                             precision={0.5} 
-                            error={errors.rating ? true : false}
-                            helperText={errors.rating}
+                            error={errors.rating ? true : undefined}
+                            // helperText={errors.rating}
                         />
                     </FormControl>
                 </div>
@@ -60,7 +60,7 @@ const AddReviewForm = ({
                             placeholder="Title"
                             value={review.title}
                             onChange={onChangeTitle}
-                            error={errors.title ? true : false}
+                            error={errors.title ? true : undefined}
                             helperText={errors.title}
                         />
                     </FormControl>
@@ -109,7 +109,7 @@ const AddReviewForm = ({
                             maxRows={4}
                             value={review.description}
                             onChange={onChangeDescription}
-                            error={errors.description ? true : false}
+                            error={errors.description ? true : undefined}
                             helperText={errors.description}
                             // Set max chracters for the input
                             inputProps={{maxLength: 140}}

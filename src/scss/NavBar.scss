@@ -48,3 +48,32 @@
     justify-content: flex-start;
     align-items:center;
 }
+
+#logoutButton {
+    background-color: $bold-accent;
+    color: whitesmoke;
+    // position: relative;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    margin: 0;
+    height: 36px;
+    border-radius: 18px;
+    &:hover {
+        background-color: #E6BC97;
+    }
+}
+
+.unauthorizedText {
+    margin-left: 10px;
+    font-weight: 300;
+    color: $bold-accent;
+}
+
+.progressCircle {
+    align-self: flex-end;
+}

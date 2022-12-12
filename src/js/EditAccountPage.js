@@ -31,7 +31,7 @@ class EditAccountPage extends React.Component
   constructor(props) {
     super(props);
 
-    this.axios = axios.create({baseURL: 'http://localhost:4000/api', timeout: 3000});
+    this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
     this.axios.defaults.headers.common['Authorization'] =
          'Bearer ' + getToken();
 
@@ -63,7 +63,7 @@ class EditAccountPage extends React.Component
 
     const queryParameters = new URLSearchParams(window.location.search)
     const user = JSON.parse(queryParameters.get("user"));
-    console.log(user);
+    // console.log(user);
     this.providedUser = user;
 
     // name: this.state.user.fullname,
@@ -143,7 +143,7 @@ class EditAccountPage extends React.Component
    * that will be submitted to the database.
    */
   submitEditAccountForm(user) {
-    console.log("GIVEN USER", user);
+    // console.log("GIVEN USER", user);
     this.axios.put('/users', {
       // _id: this.state.user._id,
       name: user.name,
@@ -152,7 +152,7 @@ class EditAccountPage extends React.Component
       // eventPrefs: this.state.user.eventPrefs
     }).then(
       (response) => {
-        console.log(response);
+        // console.log(response);
         // this.setState({
         //   name: response.data.data.u
         //   username:
@@ -193,7 +193,7 @@ class EditAccountPage extends React.Component
     if (hasError || !hasAllInfo) {
       errors.message = "Please satisfy all requirements.";
     } else {
-      console.log("no errors");
+      // console.log("no errors");
       // Actually submit the form
       var user = {
         usr: this.state.user.username,
@@ -207,7 +207,7 @@ class EditAccountPage extends React.Component
   }
 
   handleCancel() {
-    window.location = "https://localhost:3000/accountinformation/user?" + JSON.stringify(this.providedUser);
+    window.location = "https://nickwinkler.web.illinois.edu/accountinformation/user?" + JSON.stringify(this.providedUser);
   }
 
   render ()   // Here is the start of the render().
