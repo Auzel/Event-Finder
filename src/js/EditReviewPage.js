@@ -5,6 +5,7 @@ import NavBar from "./NavBar.js"
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { getToken } from './token.js';
+import { Navigate } from 'react-router-dom';
 
 const validator = require("validator");
 
@@ -79,7 +80,8 @@ export default class EditReviewPage extends React.Component
       // name and the value to the error message to display.
       errors: {},
       // Contains the key/value pairs for inputed values.
-      review: review
+      review: review,
+      redirect: undefined
     }
 
     // bind the handlers to 'this'.
@@ -215,7 +217,8 @@ export default class EditReviewPage extends React.Component
       eventAttendedDate: review.eventAttendedDate
     }).then((res) => {
       // console.log(res);
-      window.location = "https://nickwinkler.web.illinois.edu/accountinformation";
+      this.setState({redirect: true});
+      // window.location = "https://nickwinkler.web.illinois.edu/accountinformation";
     }).catch((error) => {
       console.log("error", error);
     })
@@ -269,6 +272,7 @@ export default class EditReviewPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
+        { this.state.redirect ? <Navigate to={"/accountinformation"} replace={true} /> : <></> }
         <NavBar variant="blank" logoLink="/" />
         <EditReviewForm
           // Pass the state values and handler functions as parameters

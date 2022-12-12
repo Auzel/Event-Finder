@@ -7,18 +7,24 @@ import PropTypes from 'prop-types';
 import { CircularProgress } from '@mui/material';
 import { setToken } from './token';
 import { setUserId } from './userId';
+import { Navigate } from 'react-router-dom';
 
 export default class NavBar extends React.Component {
     constructor(props) {
         super(props);
 
         this.handleLogout = this.handleLogout.bind(this);
+
+        this.state = {
+            redirect: undefined
+        }
     }
 
     handleLogout() {
         console.log("logging out");
         sessionStorage.clear();
-        window.location = "https://nickwinkler.web.illinois.edu/";
+        this.setState({redirect: true});
+        // window.location = "https://nickwinkler.web.illinois.edu/";
     }
 
     logoImg() {
@@ -33,12 +39,14 @@ export default class NavBar extends React.Component {
         if (!this.props.variant || this.props.variant == "blank") {
             return (
                 <div className='navBar'>
+                    { this.state.redirect ? <Navigate to="/" replace={true} /> : <></> }
                     {this.logoImg()}
                 </div>
             )
         } else if (this.props.variant == "map") {
             return (
                 <div className='navBar'>
+                    { this.state.redirect ? <Navigate to="/" replace={true} /> : <></> }
                     <div className='logoWLoading'>
                         {this.logoImg()}
                         {this.props.loadingIcon ? <div className='progressCircle'><CircularProgress style={{'color': "#415380"}}/></div> : <></>}
@@ -57,6 +65,7 @@ export default class NavBar extends React.Component {
         } else if (this.props.variant == "account") {
             return (
                 <div className='navBar'>
+                    { this.state.redirect ? <Navigate to="/" replace={true} /> : <></> }
                     {this.logoImg()}
                     <div className='navButtons'>
                         <div className='navBarButtonDiv'>
@@ -71,6 +80,7 @@ export default class NavBar extends React.Component {
         } else if (this.props.variant == "review") {
             return (
                 <div className='navBar'>
+                    { this.state.redirect ? <Navigate to="/" replace={true} /> : <></> }
                     {this.logoImg()}
                     <div className='navButtons'>
                         <div className='navBarButtonDiv'>

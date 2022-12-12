@@ -5,9 +5,10 @@ import NavBar from "./NavBar.js"
 import dayjs from 'dayjs';
 import { getUserId } from './userId';
 import PropTypes from "prop-types";
-import { ContactPageOutlined } from '@mui/icons-material';
+import { ContactPageOutlined, UndoRounded } from '@mui/icons-material';
 import axios from 'axios';
 import { getToken } from './token';
+import { Navigate } from 'react-router-dom';
 
 const validator = require("validator");
 
@@ -68,6 +69,7 @@ export default class AddReviewPage extends React.Component
         date: dayjs(),
         description: ""
       },
+      redirect: undefined
     }
 
     // bind the handlers to 'this'.
@@ -178,7 +180,8 @@ export default class AddReviewPage extends React.Component
         // console.log("RESPONSE", response);
         // let user = JSON.parse(response).data.data.user;
         // window.location("https://localhost:3000/accountinformation?" + JSON.stringify(user));
-        window.location = "https://nickwinkler.web.illinois.edu/map";
+        // window.location = "https://nickwinkler.web.illinois.edu/map";
+        this.setState({redirect: true});
       }
     ).catch((error) => {
       console.log("ERROR!", error);
@@ -231,6 +234,7 @@ export default class AddReviewPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
+        { this.state.redirect ? <Navigate to="/map" replace={true} /> : <></> }
         <NavBar variant="blank" logoLink="/" />
         <AddReviewForm
           // Pass the state values and handler functions as parameters
