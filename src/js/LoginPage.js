@@ -7,6 +7,7 @@ import { GlobalContext } from './GlobalContext';
 // import { Global } from '@emotion/react';
 import { setUserId } from './userId';
 import { setToken } from './token';
+import { Navigate } from 'react-router-dom';
 
 const validator = require("validator");
 
@@ -33,6 +34,7 @@ export default class LoginPage extends React.Component
 
   constructor(props) {
     super(props);
+    console.log(props);
 
     // State contains any mutable value in the form
     this.state = {
@@ -46,7 +48,8 @@ export default class LoginPage extends React.Component
         password: "",
       },
       // Value for whether the password should be astricts
-      showPw: false
+      showPw: false,
+      isLoggedin: undefined
     }
 
     this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
@@ -184,9 +187,13 @@ export default class LoginPage extends React.Component
         setUserId(res_id);
         setToken(res_token);
 
+        this.setState({isLoggedin: true});
+
         // Go to the map page
-        
-        window.location = "http://nickwinkler.web.illinois.edu/Map";
+        // this.setState({redirec})
+        // console.log(this.props);
+        // this.props.navigation.navigate('YouScreen', {paramsIfAny})
+        // window.location = "http://nickwinkler.web.illinois.edu/Map";
       }
       ).catch((error) => {
         // console.log("ERROR!", error);
@@ -245,6 +252,7 @@ export default class LoginPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
+        { this.state.isLoggedin ? <Navigate to="/map" replace={true} /> : <></> }
         <NavBar variant="blank" logoLink="/" />
         <LoginForm
           // Pass the state values and handler functions as parameters
