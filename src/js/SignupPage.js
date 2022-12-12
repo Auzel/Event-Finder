@@ -240,6 +240,8 @@ class SignupPage extends React.Component
       }).catch((error) => {
         if (error.response.data.message === "User already exists") {
           this.setState({errors: {message: "Email already used, please login"}});
+        } else {
+          this.setState({errors: {message: "Server error, reload page and try again"}});
         }
         // console.log("ERROR!", error);
       });
