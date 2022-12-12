@@ -185,6 +185,7 @@ export default class LoginPage extends React.Component
         setToken(res_token);
 
         // Go to the map page
+        
         window.location = "http://nickwinkler.web.illinois.edu/Map";
       }
       ).catch((error) => {

@@ -17,9 +17,9 @@ root.render(
   // <React.StrictMode>
   <div>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Heebo"></link>
-    <HashRouter basename={process.env.PUBLIC_URL}>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <App />
-    </HashRouter>
+    </BrowserRouter>
   </div>
   // </React.StrictMode>
 );
