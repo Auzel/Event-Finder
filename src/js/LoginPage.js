@@ -34,7 +34,7 @@ export default class LoginPage extends React.Component
 
   constructor(props) {
     super(props);
-    console.log(props);
+    // console.log(props);
 
     // State contains any mutable value in the form
     this.state = {
@@ -49,7 +49,7 @@ export default class LoginPage extends React.Component
       },
       // Value for whether the password should be astricts
       showPw: false,
-      isLoggedin: undefined
+      redirect: undefined
     }
 
     this.axios = axios.create({baseURL: 'https://final-project-409.herokuapp.com/api', timeout: 3000});
@@ -187,7 +187,7 @@ export default class LoginPage extends React.Component
         setUserId(res_id);
         setToken(res_token);
 
-        this.setState({isLoggedin: true});
+        this.setState({redirect: true});
 
         // Go to the map page
         // this.setState({redirec})
@@ -252,7 +252,7 @@ export default class LoginPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
-        { this.state.isLoggedin ? <Navigate to="/map" replace={true} /> : <></> }
+        { this.state.redirect ? <Navigate to="/map" replace={true} /> : <></> }
         <NavBar variant="blank" logoLink="/" />
         <LoginForm
           // Pass the state values and handler functions as parameters

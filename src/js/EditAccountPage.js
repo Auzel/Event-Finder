@@ -6,6 +6,7 @@ import '../scss/AccountHistory.scss'
 import axios from 'axios';
 import { getToken } from './token';
 import { getUserId } from './userId.js'
+import { Navigate } from 'react-router-dom';
 
 const validator = require("validator");
 
@@ -91,7 +92,9 @@ class EditAccountPage extends React.Component
       // name and the value to the error message to display.
       errors: {},
       // Contains the key/value pairs for inputed values.
-      user: def_user
+      user: def_user,
+      redirectSubmit: undefined,
+      redirectCancel: undefined
     }
 
     // bind the handlers to 'this'.
@@ -157,7 +160,8 @@ class EditAccountPage extends React.Component
         //   name: response.data.data.u
         //   username:
         // })
-        window.location = "http://localhost:3000/accountinformation";
+        this.setState({redirectSubmit: true});
+        // window.location = "http://localhost:3000/accountinformation";
       }
     ).catch((error) => {
       console.log("ERROR!", error);
@@ -207,7 +211,8 @@ class EditAccountPage extends React.Component
   }
 
   handleCancel() {
-    window.location = "https://nickwinkler.web.illinois.edu/accountinformation/user?" + JSON.stringify(this.providedUser);
+    this.setState({redirectCancel: true});
+    // window.location = "https://nickwinkler.web.illinois.edu/accountinformation/user?" + JSON.stringify(this.providedUser);
   }
 
   render ()   // Here is the start of the render().
@@ -215,7 +220,8 @@ class EditAccountPage extends React.Component
     // Here we are returning the format of the List View.
     return (
       <div>
-
+        { this.state.redirectCancel ? <Navigate to={"/accountinformation/user?" + JSON.stringify(this.providedUser)} replace={true} /> : <></> }
+        { this.state.redirectSubmit ? <Navigate to={"/accountinformation"} replace={true} /> : <></> }
         <NavBar variant="blank" logoLink="/" />
 
         <EditAccountForm
